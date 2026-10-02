@@ -1,0 +1,63 @@
+========================================================================
+THÔNG TIN TÀI KHOẢN HỆ THỐNG THƯ VIỆN ĐẠI HỌC UNETI (DEMO & BÁO CÁO)
+ĐỒ ÁN TỐT NGHIỆP / ĐỒ ÁN MÔN HỌC - SINH VIÊN NĂM 4 THỰC HIỆN
+NHÓM THỰC HIỆN: Trương Trọng Cường (trưởng nhóm)
+THÀNH VIÊN    : Nguyễn Xuân Trường, Nguyễn Viết Hồng, Đặng Xuân Tình
+========================================================================
+
+1. TÀI KHOẢN QUẢN TRỊ (ADMIN / THỦ THƯ):
+- Tên đăng nhập: admin
+  Mật khẩu     : 123456
+  Họ tên       : Quản Trị Viên Chính
+  Quyền hạn    : Toàn quyền quản trị hệ thống:
+                 + Xem Dashboard & Báo cáo thống kê tổng hợp (LINQ)
+                 + Quản lý Danh mục Thể loại sách (Thêm/Sửa/Xóa)
+                 + Quản lý Đầu sách & Kho sách tồn (Thêm/Sửa/Xóa/Tìm kiếm)
+                 + Quản lý danh sách Độc giả (Xem chi tiết, cập nhật, khóa thẻ)
+                 + Quản lý Tài khoản người dùng (Khóa/mở khóa)
+                 + Duyệt phiếu mượn trả, xử lý sách quá hạn
+
+- Tên đăng nhập: admin2
+  Mật khẩu     : 123456
+  Họ tên       : Thủ Thư Nguyễn Thị Mai
+  Quyền hạn    : Tài khoản thủ thư quản trị phụ, hỗ trợ ca trực.
+
+2. TÀI KHOẢN ĐỘC GIẢ (USER / SINH VIÊN):
+- Tên đăng nhập: docgia1
+  Mật khẩu     : 123456
+  Họ tên       : Nguyễn Minh Tuấn
+  Đặc điểm     : Đang có sẵn sách mượn quá hạn và lịch sử mượn trả phục vụ demo kịch bản nhắc nhở quá hạn.
+
+- Tên đăng nhập: docgia2
+  Mật khẩu     : 123456
+  Họ tên       : Trần Thu Hà
+  Đặc điểm     : Tài khoản độc giả đang hoạt động bình thường, dùng để test đăng ký mượn sách trực tuyến mới.
+
+- Tên đăng nhập: docgia3 đến docgia14
+  Mật khẩu     : 123456 (đồng bộ cho tất cả tài khoản mẫu)
+
+3. TÀI KHOẢN TEST TRƯỜNG HỢP BỊ KHÓA:
+- Tên đăng nhập: docgia15
+  Mật khẩu     : 123456
+  Họ tên       : Đinh Trọng Nghĩa
+  Trạng thái   : Bị khóa (Dùng để kiểm thử hệ thống chặn đăng nhập khi tài khoản bị khóa).
+
+4. TÍNH NĂNG ĐĂNG KÝ TÀI KHOẢN MỚI (DÀNH CHO SINH VIÊN):
+- URL Truy cập : /TaiKhoan/DangKy (hoặc bấm nút "Đăng ký" trên thanh menu/trang đăng nhập)
+- Cơ chế bảo mật: Người dùng tự đăng ký mặc định nhận vai trò "DocGia" (User), hệ thống tự động sinh hồ sơ Độc giả liên kết 1 - 1 với Tài khoản. Quyền "Admin" được phân cấp độc quyền bởi Quản trị viên cấp cao.
+
+5. FILE SCRIPT CƠ SỞ DỮ LIỆU SQL SERVER MANAGEMENT STUDIO (SSMS 22):
+- Vị trí file  : CSDL_QuanLyThuVien_SSMS.sql (ngay tại thư mục gốc và thư mục quanlythuvien/Data)
+- Tương thích  : SSMS 18 / 19 / 20 / 22, Microsoft SQL Server 2017/2019/2022/LocalDB
+- Nội dung file:
+  + Chứa câu lệnh khởi tạo CSDL tiếng Việt Unicode (Vietnamese_CI_AS)
+  + 06 Bảng chuẩn: TaiKhoans, TheLoais, Sachs, DocGias, PhieuMuons, ChiTietPhieuMuons
+  + Đầy đủ Primary Key, Foreign Key (Cascade/No Action), Unique, Check constraints, Indexes
+  + Bộ dữ liệu mẫu phong phú (17 Tài khoản, 6 Thể loại, 22 Đầu sách, 15 Độc giả, 18 Phiếu mượn)
+  + 03 Views tiện ích (v_DanhSachSach, v_LichSuPhieuMuon, v_DanhSachQuaHan)
+  + 03 Stored Procedures chuyên nghiệp (sp_DangKyDocGia, sp_KiemTraDangNhap, sp_ThongKeTongQuanDashboard)
+
+Ghi chú kiểm thử:
+- Trên trang đăng nhập (/TaiKhoan/DangNhap), có nút mở modal:
+  "📋 Dành cho Giảng viên chấm đồ án: Xem danh sách tài khoản demo" để chọn nhanh tài khoản thử nghiệm.
+========================================================================

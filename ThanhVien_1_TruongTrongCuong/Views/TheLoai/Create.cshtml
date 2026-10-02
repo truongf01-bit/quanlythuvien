@@ -1,0 +1,45 @@
+@model QuanLyThuVien.Models.TheLoai
+@{
+    ViewData["Title"] = "Thêm Thể loại mới";
+}
+
+<div class="card shadow-sm border-0 mx-auto" style="max-width: 650px;">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0 fw-bold">+ THÊM THỂ LOẠI SÁCH MỚI</h5>
+    </div>
+    <div class="card-body p-4">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="TenTheLoai" class="form-label fw-semibold"></label> <span class="text-danger">*</span>
+                <input asp-for="TenTheLoai" class="form-control" placeholder="Nhập tên thể loại sách..." />
+                <span asp-validation-for="TenTheLoai" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="MoTa" class="form-label fw-semibold"></label>
+                <textarea asp-for="MoTa" class="form-control" rows="4" placeholder="Nhập mô tả chi tiết cho thể loại..."></textarea>
+                <span asp-validation-for="MoTa" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="TrangThai" class="form-label fw-semibold"></label>
+                <select asp-for="TrangThai" class="form-select">
+                    <option value="Đang sử dụng">Đang sử dụng</option>
+                    <option value="Ngừng sử dụng">Ngừng sử dụng</option>
+                </select>
+                <span asp-validation-for="TrangThai" class="text-danger small"></span>
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary fw-bold px-4">Lưu thể loại</button>
+                <a asp-action="Index" class="btn btn-secondary">Hủy / Quay lại</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

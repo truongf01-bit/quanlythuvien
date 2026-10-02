@@ -1,0 +1,167 @@
+@model QuanLyThuVien.ViewModels.DangKyViewModel
+@{
+    ViewData["Title"] = "Đăng ký Tài khoản Độc giả Thư viện";
+}
+
+<div class="login-container" style="max-width: 1060px;">
+    <div class="row g-0">
+
+        <div class="col-lg-5 d-none d-lg-flex login-art-panel position-relative">
+            <div class="mb-4">
+                <span class="badge bg-light text-primary px-3 py-2 fw-semibold rounded-pill mb-3">
+                    ĐẠI HỌC KINH TẾ - KỸ THUẬT CÔNG NGHIỆP
+                </span>
+                <h2 class="fw-bold text-white mb-2">Đăng ký Thẻ Độc Giả</h2>
+                <p class="text-white-50">Tạo tài khoản sinh viên trực tuyến để kích hoạt thẻ mượn sách, tra cứu giáo trình và sử dụng các dịch vụ tiện ích của thư viện.</p>
+            </div>
+
+            <div class="bg-white bg-opacity-10 border border-white border-opacity-15 rounded-3 p-3 mb-3">
+                <div class="fw-semibold text-warning mb-2">🔰 Quyền lợi Tài khoản Độc giả (User):</div>
+                <div class="small text-white-50 mb-1">✓ Tra cứu &amp; tìm kiếm hàng ngàn đầu sách học thuật</div>
+                <div class="small text-white-50 mb-1">✓ Đăng ký mượn sách giáo trình trực tuyến</div>
+                <div class="small text-white-50 mb-1">✓ Theo dõi hạn trả sách, danh sách sách đang mượn</div>
+                <div class="small text-white-50">✓ Xem lịch sử mượn trả và thông tin tài khoản cá nhân</div>
+            </div>
+
+            <div class="alert alert-warning bg-warning bg-opacity-25 border-warning border-opacity-50 text-white small mb-4 py-2 px-3">
+                <strong>🔒 Lưu ý phân quyền:</strong> Form này chỉ cấp tài khoản <strong>Độc giả (User/Sinh viên)</strong>. Tài khoản <strong>Quản trị viên (Admin/Thủ thư)</strong> được cấp quyền riêng bởi Ban Giám đốc Thư viện.
+            </div>
+
+            <div class="mt-auto small text-white-50">
+                Đã có thẻ thư viện? <a asp-action="DangNhap" class="text-warning fw-bold text-decoration-none">Đăng nhập tại đây &rarr;</a>
+            </div>
+        </div>
+
+        <div class="col-lg-7 login-form-panel d-flex flex-column justify-content-center py-4 px-4 px-md-5">
+            <div class="mb-4 text-center text-lg-start">
+                <div class="d-flex align-items-center justify-content-between">
+                    <h3 class="fw-bold text-dark mb-1">Tạo Tài Khoản Mới</h3>
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 rounded-pill">
+                        Vai trò: Độc giả (User)
+                    </span>
+                </div>
+                <p class="text-muted small mb-0">Vui lòng điền đầy đủ các thông tin cá nhân bên dưới để hoàn tất đăng ký</p>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+            {
+                <div class="alert alert-danger py-2 small shadow-sm" role="alert">
+                    <div class="fw-bold mb-1">Vui lòng kiểm tra lại các thông tin sau:</div>
+                    <div asp-validation-summary="All" class="text-danger ps-3 mb-0"></div>
+                </div>
+            }
+
+            <form asp-action="DangKy" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    <h6 class="text-uppercase text-secondary fw-bold small border-bottom pb-1 mb-3">
+                        1. Thông tin Tài khoản
+                    </h6>
+                    <div class="row g-2">
+                        <div class="col-md-12 mb-2">
+                            <label asp-for="TenDangNhap" class="form-label small fw-semibold text-secondary"></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-muted border-end-0">👤</span>
+                                <input asp-for="TenDangNhap" class="form-control border-start-0 ps-0" placeholder="Nhập tên đăng nhập (VD: sv_nguyenvanan)" autofocus />
+                            </div>
+                            <span asp-validation-for="TenDangNhap" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-2">
+                            <label asp-for="MatKhau" class="form-label small fw-semibold text-secondary"></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-muted border-end-0">🔒</span>
+                                <input asp-for="MatKhau" id="matKhau" class="form-control border-start-0 ps-0" placeholder="Tối thiểu 6 ký tự" />
+                                <button class="btn btn-outline-light border text-muted" type="button" onclick="togglePassword('matKhau')">👁️</button>
+                            </div>
+                            <span asp-validation-for="MatKhau" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-2">
+                            <label asp-for="XacNhanMatKhau" class="form-label small fw-semibold text-secondary"></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-muted border-end-0">🔑</span>
+                                <input asp-for="XacNhanMatKhau" id="xacNhanMatKhau" class="form-control border-start-0 ps-0" placeholder="Nhập lại mật khẩu" />
+                                <button class="btn btn-outline-light border text-muted" type="button" onclick="togglePassword('xacNhanMatKhau')">👁️</button>
+                            </div>
+                            <span asp-validation-for="XacNhanMatKhau" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <h6 class="text-uppercase text-secondary fw-bold small border-bottom pb-1 mb-3">
+                        2. Thông tin Sinh viên / Độc giả
+                    </h6>
+                    <div class="row g-2">
+                        <div class="col-md-8 mb-2">
+                            <label asp-for="HoTen" class="form-label small fw-semibold text-secondary"></label>
+                            <input asp-for="HoTen" class="form-control" placeholder="Họ và tên đầy đủ (VD: Trương Trọng Cường)" />
+                            <span asp-validation-for="HoTen" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4 mb-2">
+                            <label asp-for="GioiTinh" class="form-label small fw-semibold text-secondary"></label>
+                            <select asp-for="GioiTinh" class="form-select">
+                                <option value="Nam">Nam</option>
+                                <option value="Nữ">Nữ</option>
+                                <option value="Khác">Khác</option>
+                            </select>
+                            <span asp-validation-for="GioiTinh" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-2">
+                            <label asp-for="NgaySinh" class="form-label small fw-semibold text-secondary"></label>
+                            <input asp-for="NgaySinh" type="date" class="form-control" />
+                            <span asp-validation-for="NgaySinh" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-2">
+                            <label asp-for="SoDienThoai" class="form-label small fw-semibold text-secondary"></label>
+                            <input asp-for="SoDienThoai" class="form-control" placeholder="VD: 0912345678" />
+                            <span asp-validation-for="SoDienThoai" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-12 mb-2">
+                            <label asp-for="Email" class="form-label small fw-semibold text-secondary"></label>
+                            <input asp-for="Email" type="email" class="form-control" placeholder="VD: vanan@sv.uneti.edu.vn" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-12 mb-2">
+                            <label asp-for="DiaChi" class="form-label small fw-semibold text-secondary"></label>
+                            <input asp-for="DiaChi" class="form-control" placeholder="VD: 218 Lĩnh Nam, Hoàng Mai, Hà Nội" />
+                            <span asp-validation-for="DiaChi" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-primary-custom btn-lg fs-6 py-2">
+                        Đăng Ký Tài Khoản Độc Giả
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-4 pt-3 border-top text-center text-muted small">
+                <span>Bạn đã có tài khoản thư viện? </span>
+                <a asp-action="DangNhap" class="fw-bold text-primary text-decoration-none">Đăng nhập ngay</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function togglePassword(inputId) {
+            var input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+            } else {
+                input.type = 'password';
+            }
+        }
+    </script>
+}

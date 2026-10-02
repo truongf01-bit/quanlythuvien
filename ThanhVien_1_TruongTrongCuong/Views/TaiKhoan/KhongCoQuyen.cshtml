@@ -1,0 +1,20 @@
+@{
+    ViewData["Title"] = "Không có quyền truy cập";
+}
+
+<div class="card border-danger shadow-sm mx-auto mt-4" style="max-width: 600px;">
+    <div class="card-header bg-danger text-white fw-bold">
+        ⛔ TỪ CHỐI TRUY CẬP (PHÂN QUYỀN HỆ THỐNG)
+    </div>
+    <div class="card-body text-center p-4">
+        <h4 class="text-danger fw-bold mb-3">Bạn không có quyền thực hiện chức năng này!</h4>
+        <p class="text-muted">
+            Chức năng bạn vừa truy cập yêu cầu quyền <strong>Quản trị viên (Admin)</strong> hoặc thuộc về dữ liệu cá nhân của tài khoản khác.
+            Hệ thống đã kiểm tra quyền trực tiếp tại <strong>Controller</strong>.
+        </p>
+        <div class="mt-4 d-flex justify-content-center gap-2">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Về Trang chủ</a>
+            <a asp-controller="TaiKhoan" asp-action="DangNhap" class="btn btn-outline-secondary">Đăng nhập tài khoản khác</a>
+        </div>
+    </div>
+</div>
