@@ -1,0 +1,7 @@
+﻿# Visual Studio / Windows junk
+.vs/
+bin/
+obj/
+*.user
+Thumbs.db
+Desktop.ini
