@@ -1,0 +1,89 @@
+@model IEnumerable<QuanLyThuVien.Models.DocGia>
+@{
+    ViewData["Title"] = "Quản lý Độc giả";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h3 class="fw-bold text-primary mb-0">🎓 QUẢN LÝ ĐỘC GIẢ THƯ VIỆN</h3>
+        <small class="text-muted">Tra cứu độc giả theo Họ tên, Số điện thoại, Email và quản lý trạng thái thẻ độc giả</small>
+    </div>
+    <a asp-action="Create" class="btn btn-primary fw-bold">+ Thêm Độc giả mới</a>
+</div>
+
+<div class="card shadow-sm border-0 mb-3">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-2 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label small fw-semibold mb-1">🔍 Tìm kiếm độc giả (Họ tên, SĐT, Email)</label>
+                <input type="text" name="tuKhoa" value="@ViewBag.TuKhoa" class="form-control form-control-sm" placeholder="Nhập họ tên, số điện thoại hoặc email..." />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-semibold mb-1">📌 Trạng thái</label>
+                <select name="trangThai" class="form-select form-select-sm">
+                    <option value="">-- Tất cả trạng thái --</option>
+                    <option value="Hoạt động" selected="@(ViewBag.TrangThai == "Hoạt động")">Hoạt động</option>
+                    <option value="Bị khóa" selected="@(ViewBag.TrangThai == "Bị khóa")">Bị khóa</option>
+                </select>
+            </div>
+            <div class="col-md-4 d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-primary fw-bold px-3">Tìm kiếm</button>
+                <a asp-action="Index" class="btn btn-sm btn-outline-secondary">Đặt lại</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered mb-0 align-middle">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Mã ĐG</th>
+                        <th>Họ và tên</th>
+                        <th>Tài khoản</th>
+                        <th>Ngày sinh</th>
+                        <th>Giới tính</th>
+                        <th>Số điện thoại</th>
+                        <th>Email</th>
+                        <th class="text-center">Số phiếu mượn</th>
+                        <th class="text-center">Trạng thái</th>
+                        <th class="text-center" style="width: 160px;">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="fw-bold">#@item.MaDocGia</td>
+                            <td class="fw-semibold text-primary">@item.HoTen</td>
+                            <td><code>@item.TaiKhoan?.TenDangNhap</code></td>
+                            <td>@item.NgaySinh.ToString("dd/MM/yyyy")</td>
+                            <td>@item.GioiTinh</td>
+                            <td>@item.SoDienThoai</td>
+                            <td>@item.Email</td>
+                            <td class="text-center">
+                                <span class="badge bg-secondary">@item.PhieuMuons.Count phiếu</span>
+                            </td>
+                            <td class="text-center">
+                                @if (item.TrangThai == "Hoạt động")
+                                {
+                                    <span class="badge bg-success">Hoạt động</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Bị khóa</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <a asp-action="Details" asp-route-id="@item.MaDocGia" class="btn btn-sm btn-outline-info">Chi tiết</a>
+                                <a asp-action="Edit" asp-route-id="@item.MaDocGia" class="btn btn-sm btn-outline-warning">Sửa</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

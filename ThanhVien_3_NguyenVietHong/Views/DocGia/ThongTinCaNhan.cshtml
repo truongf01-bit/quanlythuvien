@@ -1,0 +1,91 @@
+@model QuanLyThuVien.Models.DocGia
+@{
+    ViewData["Title"] = "Hồ sơ cá nhân độc giả";
+}
+
+<div class="card border-0 shadow-sm mx-auto" style="max-width: 800px;">
+    <div class="card-header bg-primary-custom text-white d-flex justify-content-between align-items-center py-3">
+        <h5 class="mb-0 fw-bold">Hồ Sơ Độc Giả Thư Viện</h5>
+        <span class="badge bg-light text-dark">Thẻ độc giả: #@Model.MaDocGia</span>
+    </div>
+    <div class="card-body p-4 p-md-5">
+
+        <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
+            <img src="/images/avatars/avatar-student.svg" alt="Avatar" style="width: 64px; height: 64px; border-radius: 50%;" />
+            <div>
+                <h5 class="fw-bold text-dark mb-0">@Model.HoTen</h5>
+                <div class="text-muted small">Tài khoản: <code>@Model.TaiKhoan?.TenDangNhap</code> | Ngày tham gia: @Model.NgayDangKy.ToString("dd/MM/yyyy")</div>
+            </div>
+        </div>
+
+        <form asp-action="ThongTinCaNhan" method="post">
+            <input type="hidden" asp-for="MaDocGia" />
+            <input type="hidden" asp-for="MaTaiKhoan" />
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small"></div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label small fw-semibold text-secondary">Tên đăng nhập hệ thống</label>
+                    <input type="text" value="@Model.TaiKhoan?.TenDangNhap" class="form-control form-control-sm bg-light" readonly />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label small fw-semibold text-secondary">Ngày cấp thẻ thư viện</label>
+                    <input type="text" value="@Model.NgayDangKy.ToString("dd/MM/yyyy")" class="form-control form-control-sm bg-light" readonly />
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="HoTen" class="form-label small fw-semibold text-secondary"></label> <span class="text-danger">*</span>
+                    <input asp-for="HoTen" class="form-control form-control-sm" />
+                    <span asp-validation-for="HoTen" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-3">
+                    <label asp-for="NgaySinh" class="form-label small fw-semibold text-secondary"></label> <span class="text-danger">*</span>
+                    <input asp-for="NgaySinh" type="date" class="form-control form-control-sm" />
+                    <span asp-validation-for="NgaySinh" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-3">
+                    <label asp-for="GioiTinh" class="form-label small fw-semibold text-secondary"></label>
+                    <select asp-for="GioiTinh" class="form-select form-select-sm">
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                        <option value="Khác">Khác</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="SoDienThoai" class="form-label small fw-semibold text-secondary"></label> <span class="text-danger">*</span>
+                    <input asp-for="SoDienThoai" class="form-control form-control-sm" />
+                    <span asp-validation-for="SoDienThoai" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="Email" class="form-label small fw-semibold text-secondary"></label> <span class="text-danger">*</span>
+                    <input asp-for="Email" class="form-control form-control-sm" />
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-12">
+                    <label asp-for="DiaChi" class="form-label small fw-semibold text-secondary"></label> <span class="text-danger">*</span>
+                    <input asp-for="DiaChi" class="form-control form-control-sm" />
+                    <span asp-validation-for="DiaChi" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-4 pt-3 border-top">
+                <button type="submit" class="btn btn-primary-custom px-4 fw-semibold">
+                    Cập Nhật Thông Tin
+                </button>
+                <a asp-controller="Sach" asp-action="Index" class="btn btn-outline-secondary">
+                    Tra cứu danh mục sách
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
