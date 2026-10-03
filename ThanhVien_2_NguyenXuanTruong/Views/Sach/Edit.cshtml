@@ -1,0 +1,130 @@
+﻿@model QuanLyThuVien.Models.Sach
+@{
+    ViewData["Title"] = "Cập nhật thông tin Sách";
+    var imgVal = string.IsNullOrEmpty(Model.HinhAnh) ? "/images/books/default-book.svg" : Model.HinhAnh;
+}
+
+<div class="card border-0 shadow-sm mx-auto" style="max-width: 860px;">
+    <div class="card-header bg-dark text-white py-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold">Cập Nhật Thông Tin Sách (#@Model.MaSach)</h5>
+        <span class="badge bg-secondary">Mã: @Model.MaSach</span>
+    </div>
+    <div class="card-body p-4">
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="MaSach" />
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <label asp-for="TenSach" class="form-label small fw-semibold text-secondary"></label> <span class="text-danger">*</span>
+                    <input asp-for="TenSach" class="form-control" />
+                    <span asp-validation-for="TenSach" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="MaTheLoai" class="form-label small fw-semibold text-secondary"></label> <span class="text-danger">*</span>
+                    <select asp-for="MaTheLoai" asp-items="ViewBag.DanhSachTheLoai" class="form-select"></select>
+                    <span asp-validation-for="MaTheLoai" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="TacGia" class="form-label small fw-semibold text-secondary"></label> <span class="text-danger">*</span>
+                    <input asp-for="TacGia" class="form-control" />
+                    <span asp-validation-for="TacGia" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="NhaXuatBan" class="form-label small fw-semibold text-secondary"></label> <span class="text-danger">*</span>
+                    <input asp-for="NhaXuatBan" class="form-control" />
+                    <span asp-validation-for="NhaXuatBan" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-3">
+                    <label asp-for="NamXuatBan" class="form-label small fw-semibold text-secondary"></label> <span class="text-danger">*</span>
+                    <input asp-for="NamXuatBan" type="number" class="form-control" />
+                    <span asp-validation-for="NamXuatBan" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-3">
+                    <label asp-for="SoLuong" class="form-label small fw-semibold text-secondary"></label> <span class="text-danger">*</span>
+                    <input asp-for="SoLuong" type="number" class="form-control" />
+                    <span asp-validation-for="SoLuong" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-3">
+                    <label asp-for="SoLuongCon" class="form-label small fw-semibold text-secondary"></label> <span class="text-danger">*</span>
+                    <input asp-for="SoLuongCon" type="number" class="form-control" />
+                    <span asp-validation-for="SoLuongCon" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-3">
+                    <label asp-for="GiaSach" class="form-label small fw-semibold text-secondary"></label> <span class="text-danger">*</span>
+                    <input asp-for="GiaSach" type="number" step="1000" class="form-control" />
+                    <span asp-validation-for="GiaSach" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-8">
+                    <label asp-for="HinhAnh" class="form-label small fw-semibold text-secondary">Đường dẫn ảnh bìa sách</label>
+                    <div class="input-group">
+                        <input asp-for="HinhAnh" id="hinhAnhInput" class="form-control" placeholder="VD: /images/books/book-1.jpg..." oninput="capNhatPreview()" />
+                        <button type="button" class="btn btn-outline-secondary" onclick="chonAnhMau()">Dùng ảnh mẫu</button>
+                    </div>
+                    <span asp-validation-for="HinhAnh" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="TrangThai" class="form-label small fw-semibold text-secondary"></label>
+                    <select asp-for="TrangThai" class="form-select">
+                        <option value="Đang phục vụ">Đang phục vụ</option>
+                        <option value="Tạm ngừng">Tạm ngừng</option>
+                        <option value="Ngừng phục vụ">Ngừng phục vụ</option>
+                    </select>
+                    <span asp-validation-for="TrangThai" class="text-danger small"></span>
+                </div>
+
+                <div class="col-12" id="previewContainer">
+                    <div class="d-flex align-items-center gap-3 p-2 border rounded bg-light">
+                        <img id="imgPreview" src="@imgVal" alt="Preview ảnh bìa" style="width: 60px; height: 80px; object-fit: cover; border-radius: 4px;" onerror="this.src='/images/books/default-book.svg'" />
+                        <div class="small text-secondary">
+                            <div><strong>Xem trước ảnh bìa sách</strong></div>
+                            <span class="text-muted">Đường dẫn ảnh: @(string.IsNullOrEmpty(Model.HinhAnh) ? "Đang dùng ảnh mặc định" : Model.HinhAnh)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <label asp-for="MoTa" class="form-label small fw-semibold text-secondary"></label>
+                    <textarea asp-for="MoTa" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="MoTa" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-4 pt-3 border-top">
+                <button type="submit" class="btn btn-primary-custom px-4 fw-semibold">Lưu Cập Nhật</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Quay lại danh mục</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function capNhatPreview() {
+            var val = document.getElementById('hinhAnhInput').value.trim();
+            var img = document.getElementById('imgPreview');
+            if (val) {
+                img.src = val;
+            } else {
+                img.src = '/images/books/default-book.svg';
+            }
+        }
+
+        function chonAnhMau() {
+            var rand = Math.floor(Math.random() * 22) + 1;
+            var sample = '/images/books/book-' + rand + '.svg';
+            document.getElementById('hinhAnhInput').value = sample;
+            capNhatPreview();
+        }
+    </script>
+}

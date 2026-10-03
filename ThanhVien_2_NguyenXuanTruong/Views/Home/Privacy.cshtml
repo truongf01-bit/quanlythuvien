@@ -1,0 +1,67 @@
+@{
+    ViewData["Title"] = "Quy định & Nội quy Thư viện";
+}
+
+<div class="card border-0 shadow-sm mx-auto" style="max-width: 900px;">
+    <div class="card-header bg-primary-custom text-white py-3">
+        <h4 class="mb-0 fw-bold">Nội Quy &amp; Quy Định Mượn Trả Tài Liệu</h4>
+        <small class="text-white-50">Áp dụng cho Cán bộ, Giảng viên và Sinh viên Trường Đại học UNETI</small>
+    </div>
+    <div class="card-body p-4 p-md-5">
+        <div class="mb-4">
+            <h5 class="fw-bold text-dark border-bottom pb-2">1. Quy định về Thẻ và Tài khoản Thư viện</h5>
+            <p class="text-secondary small leading-relaxed">
+                - Mỗi sinh viên UNETI được cấp 01 tài khoản thư viện điện tử đồng bộ với mã số sinh viên khi nhập học.<br />
+                - Sinh viên có trách nhiệm bảo mật thông tin đăng nhập, không cho người khác mượn tài khoản hoặc thẻ thư viện.<br />
+                - Các trường hợp vi phạm quy chế hoặc để tài khoản phát sinh mượn quá hạn kéo dài sẽ bị tạm khóa quyền đăng ký mượn trực tuyến.
+            </p>
+        </div>
+
+        <div class="mb-4">
+            <h5 class="fw-bold text-dark border-bottom pb-2">2. Định mức &amp; Thời hạn Mượn Tài liệu</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered table-sm small align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Đối tượng độc giả</th>
+                            <th>Số lượng tài liệu tối đa / phiếu</th>
+                            <th>Thời hạn mượn tối đa</th>
+                            <th>Gia hạn</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Sinh viên đại học chính quy</td>
+                            <td>Tối đa 03 đầu sách</td>
+                            <td>30 ngày kể từ ngày duyệt</td>
+                            <td>Tối đa 01 lần (+15 ngày) nếu không có người chờ</td>
+                        </tr>
+                        <tr>
+                            <td>Giảng viên &amp; Cán bộ nghiên cứu</td>
+                            <td>Tối đa 05 đầu sách</td>
+                            <td>60 ngày kể từ ngày duyệt</td>
+                            <td>Tối đa 02 lần</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <h5 class="fw-bold text-dark border-bottom pb-2">3. Trách nhiệm Bảo quản Sách &amp; Xử lý Trễ hạn</h5>
+            <p class="text-secondary small leading-relaxed">
+                - Độc giả có trách nhiệm kiểm tra tình trạng sách trước khi nhận từ thủ thư. Nếu phát hiện sách bị rách trang hoặc hư hại, cần báo ngay cho cán bộ phụ trách.<br />
+                - Nghiêm cấm mọi hành vi xé trang, viết, gạch chân, làm bẩn hoặc làm ướt tài liệu thư viện.<br />
+                - Trường hợp làm mất hoặc làm rách nát tài liệu, độc giả phải đền bù ấn bản mới tương đương hoặc bồi thường theo giá trị bìa sách được quy định trong hệ thống.<br />
+                - Trả sách quá hạn: Hệ thống sẽ tự động ghi nhận cảnh báo trễ hạn. Độc giả quá hạn trên 15 ngày sẽ bị tạm ngưng quyền mượn sách cho đến khi hoàn tất việc hoàn trả.
+            </p>
+        </div>
+
+        <div class="pt-3 border-top d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span class="small text-muted">Ban Giám đốc Trung tâm Thông tin - Thư viện UNETI</span>
+            <a asp-controller="Sach" asp-action="Index" class="btn btn-primary-custom btn-sm fw-semibold">
+                Tra cứu tài liệu ngay &rarr;
+            </a>
+        </div>
+    </div>
+</div>
