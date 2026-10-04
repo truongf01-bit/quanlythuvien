@@ -1,0 +1,186 @@
+@model QuanLyThuVien.Models.PhieuMuon
+@{
+    ViewData["Title"] = "Xác nhận Trả sách & Dòng tiền";
+    decimal tienCocConLai = ViewBag.TienCocConLai ?? 100000;
+    int soNgayTre = ViewBag.SoNgayTre ?? 0;
+    decimal tienPhat = ViewBag.TienPhat ?? 0;
+    string returnUrl = ViewBag.ReturnUrl as string ?? Context.Request.Query["returnUrl"].ToString();
+}
+
+<div class="card shadow-sm border-0 mx-auto" style="max-width: 900px;">
+    <div class="card-header @(soNgayTre > 0 ? "bg-danger" : "bg-success") text-white py-3">
+        <h5 class="mb-0 fw-bold">📥 @(soNgayTre > 0 ? "THU HỒI TÀI LIỆU QUÁ HẠN" : "XÁC NHẬN TRẢ SÁCH") &amp; ĐỐI SOÁT DÒNG TIỀN - PHIẾU #@Model.MaPhieuMuon</h5>
+    </div>
+    <div class="card-body p-4">
+        <!-- Thông tin tóm tắt -->
+        <div class="alert alert-light border mb-4">
+            <div class="row g-2">
+                <div class="col-md-6 small">
+                    <strong>🎓 Độc giả:</strong> @Model.DocGia?.HoTen (SĐT: @Model.DocGia?.SoDienThoai)<br>
+                    <strong>📅 Ngày mượn:</strong> @Model.NgayMuon.ToString("dd/MM/yyyy") |
+                    <strong>⏰ Hạn trả:</strong> @Model.HanTra.ToString("dd/MM/yyyy")
+                </div>
+                <div class="col-md-6 small">
+                    <strong>💵 Tiền cọc đang giữ:</strong> <span class="fw-bold text-primary">@tienCocConLai.ToString("N0") VNĐ</span><br>
+                    @if (soNgayTre > 0)
+                    {
+                        <strong class="text-danger">⚠️ Tình trạng trễ hạn:</strong> <span class="badge bg-danger">Quá hạn @soNgayTre ngày (Phạt dự kiến: @tienPhat.ToString("N0")đ)</span>
+                    }
+                    else
+                    {
+                        <strong class="text-success">✅ Tình trạng hạn:</strong> <span class="badge bg-success">Trả đúng hạn</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <form asp-action="TraSach" asp-route-id="@Model.MaPhieuMuon" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="returnUrl" value="@returnUrl" />
+
+            <div class="mb-4" style="max-width: 320px;">
+                <label class="form-label fw-semibold">📅 Ngày trả thực tế <span class="text-danger">*</span></label>
+                <input type="date" name="ngayTraThucTe" value="@DateTime.Today.ToString("yyyy-MM-dd")" class="form-control" required />
+            </div>
+
+            <!-- Bảng sách -->
+            <h6 class="fw-bold text-primary mb-2">📚 Cập nhật tình trạng sách khi trả</h6>
+            <div class="table-responsive mb-4">
+                <table class="table table-bordered align-middle mb-0">
+                    <thead class="table-light small">
+                        <tr>
+                            <th>Mã sách</th>
+                            <th>Tên sách</th>
+                            <th class="text-center">SL Mượn</th>
+                            <th>Tình trạng sách khi trả</th>
+                        </tr>
+                    </thead>
+                    <tbody class="small">
+                        @foreach (var ct in Model.ChiTietPhieuMuons)
+                        {
+                            <tr>
+                                <td>
+                                    #@ct.MaSach
+                                    <input type="hidden" name="maSachs" value="@ct.MaSach" />
+                                </td>
+                                <td class="fw-semibold">@ct.Sach?.TenSach</td>
+                                <td class="text-center fw-bold">@ct.SoLuongMuon cuốn</td>
+                                <td>
+                                    <select name="tinhTrangTras" class="form-select form-select-sm">
+                                        <option value="Tốt">Tốt (Hoàn lại số lượng vào kho)</option>
+                                        <option value="Hư hỏng nhẹ">Hư hỏng nhẹ (Hoàn lại số lượng vào kho)</option>
+                                        <option value="Mất sách">Mất sách (Không hoàn lại kho)</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- XỬ LÝ DÒNG TIỀN NGUỒN RA & NGUỒN VÀO KHI TRẢ SÁCH -->
+            <div class="card border border-primary border-opacity-25 rounded-3 mb-4 shadow-sm">
+                <div class="card-header bg-primary bg-opacity-10 py-3">
+                    <h6 class="mb-0 fw-bold text-primary d-flex align-items-center gap-2">
+                        <span>💰</span> Nghiệp Vụ Dòng Tiền Khi Trả Sách (Nguồn Ra / Nguồn Vào)
+                    </h6>
+                </div>
+                <div class="card-body p-3">
+
+                    <!-- MỤC 1: NGUỒN RA - HOÀN TRẢ TIỀN CỌC -->
+                    <div class="p-3 bg-light rounded-3 border mb-3">
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="checkHoanCoc" name="hoanTraTienCoc" value="true" checked onchange="toggleHoanCoc(this.checked)">
+                            <label class="form-check-label fw-bold text-danger" for="checkHoanCoc">
+                                📤 THỰC HIỆN XUẤT CHI HOÀN TRẢ TIỀN CỌC CHO ĐỘC GIẢ (NGUỒN RA)
+                            </label>
+                        </div>
+                        <div id="boxHoanCoc" class="row g-2 mt-1">
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold text-secondary">Số tiền hoàn cọc (VNĐ)</label>
+                                <input type="number" name="soTienHoanCoc" value="@tienCocConLai" class="form-control form-control-sm fw-bold text-danger" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold text-secondary">💸 Nguồn ra của tiền (Trích từ)</label>
+                                <select name="nguonRaHoanCoc" class="form-select form-select-sm">
+                                    <option value="Quỹ tiền mặt quầy thủ thư">Quỹ tiền mặt quầy thủ thư</option>
+                                    <option value="Tài khoản MB Bank thư viện (21611611116 - NGUYEN XUAN TRUONG)">Tài khoản MB Bank thư viện (21611611116)</option>
+                                    <option value="Ví MoMo thư viện (09******498)">Ví MoMo thư viện (09******498)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold text-secondary">📥 Nguồn vào của tiền (Độc giả nhận)</label>
+                                <select name="nguonVaoHoanCoc" class="form-select form-select-sm">
+                                    <option value="Tiền mặt độc giả nhận tại quầy">Tiền mặt độc giả nhận tại quầy</option>
+                                    <option value="Tài khoản ngân hàng của độc giả / sinh viên">Tài khoản ngân hàng của độc giả / sinh viên</option>
+                                    <option value="Ví MoMo của độc giả">Ví MoMo của độc giả</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MỤC 2: NGUỒN VÀO - THU TIỀN PHẠT QUÁ HẠN NẾU CÓ -->
+                    <div class="p-3 bg-light rounded-3 border">
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="checkThuPhat" name="thuTienPhat" value="true" @(soNgayTre > 0 ? "checked" : "") onchange="toggleThuPhat(this.checked)">
+                            <label class="form-check-label fw-bold text-success" for="checkThuPhat">
+                                📥 GHI NHẬN THU TIỀN PHẠT TRỄ HẠN / BỒI THƯỜNG (NGUỒN VÀO)
+                            </label>
+                        </div>
+                        <div id="boxThuPhat" class="row g-2 mt-1" style="@(soNgayTre > 0 ? "" : "display:none;")">
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold text-secondary">Số tiền phạt / thu thêm (VNĐ)</label>
+                                <input type="number" name="soTienPhat" value="@tienPhat" class="form-control form-control-sm fw-bold text-success" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold text-secondary">💸 Nguồn ra của tiền (Độc giả chi)</label>
+                                <select name="nguonRaThuPhat" class="form-select form-select-sm">
+                                    <option value="Tiền mặt độc giả nộp tại quầy">Tiền mặt độc giả nộp tại quầy</option>
+                                    <option value="Tài khoản cá nhân độc giả (Chuyển khoản QR)">Tài khoản cá nhân độc giả (Chuyển khoản QR)</option>
+                                    <option value="Ví MoMo của độc giả">Ví MoMo của độc giả</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold text-secondary">📥 Nguồn vào của tiền (Thư viện nhận)</label>
+                                <select name="nguonVaoThuPhat" class="form-select form-select-sm">
+                                    <option value="Quỹ tiền mặt quầy thủ thư">Quỹ tiền mặt quầy thủ thư</option>
+                                    <option value="Tài khoản MB Bank thư viện (21611611116 - NGUYEN XUAN TRUONG)">Tài khoản MB Bank thư viện (21611611116)</option>
+                                    <option value="Ví MoMo thư viện (09******498)">Ví MoMo thư viện (09******498)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn @(soNgayTre > 0 ? "btn-danger" : "btn-success") fw-bold px-4">
+                    ✔ Hoàn tất @(soNgayTre > 0 ? "Thu hồi sách" : "Nhận trả sách") &amp; Ghi nhận dòng tiền
+                </button>
+                @if (!string.IsNullOrEmpty(returnUrl))
+                {
+                    <a href="@returnUrl" class="btn btn-secondary">
+                        Hủy / Quay lại
+                    </a>
+                }
+                else
+                {
+                    <a asp-action="Details" asp-route-id="@Model.MaPhieuMuon" class="btn btn-secondary">
+                        Hủy / Quay lại
+                    </a>
+                }
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleHoanCoc(checked) {
+            document.getElementById('boxHoanCoc').style.display = checked ? 'flex' : 'none';
+        }
+        function toggleThuPhat(checked) {
+            document.getElementById('boxThuPhat').style.display = checked ? 'flex' : 'none';
+        }
+    </script>
+}

@@ -1,0 +1,125 @@
+@model QuanLyThuVien.Models.GiaoDichThanhToan
+@{
+    ViewData["Title"] = "Biên Lai Giao Dịch #" + Model.MaGiaoDichCode;
+    bool isRa = Model.HuongDongTien == "Nguồn ra";
+}
+
+<div class="container py-4">
+    <div class="card border-0 shadow mx-auto" style="max-width: 650px; border-radius: 16px;">
+        <div class="card-header @(isRa ? "bg-danger" : "bg-primary-custom") text-white py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold">
+                @(isRa ? "📤 BIÊN LAI XUẤT CHI / HOÀN TIỀN" : "📥 BIÊN LAI THU TIỀN")
+            </h5>
+            <span class="badge bg-light text-dark">@Model.TrangThai</span>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+            <div class="text-center mb-4">
+                <span class="text-muted small text-uppercase fw-semibold">HỆ THỐNG QUẢN LÝ THƯ VIỆN ĐẠI HỌC UNETI</span>
+                <h4 class="fw-bold text-dark mt-1">CHỨNG TỪ KẾ TOÁN LƯU THÔNG</h4>
+                <div class="text-primary font-monospace fw-bold">Mã GD: #@Model.MaGiaoDichCode</div>
+            </div>
+
+            <div class="bg-light p-3 rounded-4 border mb-4">
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-secondary small">Thời gian giao dịch:</span>
+                    <strong class="text-dark small">@Model.NgayGiaoDich.ToString("dd/MM/yyyy HH:mm:ss")</strong>
+                </div>
+
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-secondary small">Hướng dòng tiền:</span>
+                    <span class="badge @(isRa ? "bg-danger" : "bg-success")">
+                        @(isRa ? "Nguồn ra (Chi / Hoàn tiền)" : "Nguồn vào (Thu tiền)")
+                    </span>
+                </div>
+
+                <div class="py-2 border-bottom">
+                    <div class="d-flex justify-content-between">
+                        <span class="text-secondary small">💸 Nguồn ra của tiền:</span>
+                        <strong class="text-danger small text-end">@Model.NguonTienRa</strong>
+                    </div>
+                </div>
+
+                <div class="py-2 border-bottom">
+                    <div class="d-flex justify-content-between">
+                        <span class="text-secondary small">📥 Nguồn vào của tiền:</span>
+                        <strong class="text-success small text-end">@Model.NguonTienVao</strong>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-secondary small">Mục đích thanh toán:</span>
+                    <strong class="text-dark small">@Model.LoaiThanhToan</strong>
+                </div>
+
+                @if (Model.MaPhieuMuon.HasValue)
+                {
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-secondary small">Phiếu mượn liên kết:</span>
+                        <a asp-controller="PhieuMuon" asp-action="Details" asp-route-id="@Model.MaPhieuMuon.Value" class="badge bg-primary text-white text-decoration-none">
+                            Phiếu #@Model.MaPhieuMuon.Value
+                        </a>
+                    </div>
+                }
+
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-secondary small">Người thực hiện:</span>
+                    <strong class="text-dark small">@Model.NguoiThucHien</strong>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.SoDienThoai))
+                {
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-secondary small">Số điện thoại:</span>
+                        <span class="text-dark small">@Model.SoDienThoai</span>
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.ThongTinTaiKhoanDoiUng))
+                {
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-secondary small">Tài khoản đối ứng:</span>
+                        <span class="text-dark small fw-semibold">@Model.ThongTinTaiKhoanDoiUng</span>
+                    </div>
+                }
+
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-secondary small">Phương thức:</span>
+                    <span class="badge bg-secondary">@Model.PhuongThuc</span>
+                </div>
+
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-secondary small">Nội dung / Ghi chú:</span>
+                    <code class="text-dark">@Model.NoiDung</code>
+                </div>
+
+                <div class="d-flex justify-content-between py-2">
+                    <span class="text-secondary fw-bold">Tổng số tiền:</span>
+                    <strong class="@(isRa ? "text-danger" : "text-success") fs-4">
+                        @(isRa ? "-" : "+")@Model.SoTien.ToString("N0") VNĐ
+                    </strong>
+                </div>
+            </div>
+
+            <div class="row text-center mt-4 pt-2">
+                <div class="col-6">
+                    <div class="small fw-bold text-muted">Người nộp / nhận tiền</div>
+                    <div class="mt-4 pt-3 small text-muted">(Ký và ghi rõ họ tên)</div>
+                </div>
+                <div class="col-6">
+                    <div class="small fw-bold text-muted">Thủ thư phụ trách</div>
+                    <div class="mt-4 pt-3 small text-muted">(Xác nhận đối soát điện tử)</div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-center gap-2 mt-4 pt-3 border-top">
+                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="window.print()">
+                    🖨️ In Biên Lai
+                </button>
+                <a asp-action="LichSu" class="btn btn-primary btn-sm">
+                    Quay lại Sổ Dòng Tiền
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

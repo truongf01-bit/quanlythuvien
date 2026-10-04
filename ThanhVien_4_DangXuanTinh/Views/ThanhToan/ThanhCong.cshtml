@@ -1,0 +1,134 @@
+@model QuanLyThuVien.ViewModels.ThanhToanViewModel
+@{
+    ViewData["Title"] = "Chứng Từ Giao Dịch Thành Công";
+    bool laNguonRa = Model.HuongDongTien == "Nguồn ra";
+}
+
+<div class="container py-4">
+    <div class="card border-0 shadow mx-auto" style="max-width: 680px; border-radius: 16px;">
+        <div class="card-body p-4 p-md-5 text-center">
+            <div class="mb-3">
+                <span class="d-inline-flex align-items-center justify-content-center @(laNguonRa ? "bg-danger" : "bg-success") bg-opacity-10 @(laNguonRa ? "text-danger" : "text-success") rounded-circle" style="width: 72px; height: 72px; font-size: 2.2rem;">
+                    ✓
+                </span>
+            </div>
+
+            <h4 class="fw-bold text-dark mb-1">
+                @(laNguonRa ? "Xuất Chi / Hoàn Tiền Thành Công!" : "Ghi Nhận Thu Tiền Thành Công!")
+            </h4>
+            <p class="text-muted small mb-4">Hệ thống thư viện UNETI đã ghi nhận chứng từ luân chuyển dòng tiền</p>
+
+            <div class="bg-light p-3 p-md-4 rounded-4 text-start mb-4 border">
+                
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-secondary small">Mã chứng từ / GD:</span>
+                    <strong class="text-primary font-monospace fs-6">@ViewBag.MaGiaoDich</strong>
+                </div>
+
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-secondary small">Thời gian ghi nhận:</span>
+                    <span class="text-dark small">@ViewBag.ThoiGian</span>
+                </div>
+
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-secondary small">Hướng dòng tiền:</span>
+                    <span class="badge @(laNguonRa ? "bg-danger" : "bg-success")">
+                        @(laNguonRa ? "📤 NGUỒN RA (Chi / Hoàn tiền)" : "📥 NGUỒN VÀO (Thu tiền)")
+                    </span>
+                </div>
+
+                <!-- Nguồn ra của tiền -->
+                <div class="py-2 border-bottom">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-secondary small">💸 Nguồn ra của tiền (Trích từ):</span>
+                        <strong class="text-danger small text-end">@Model.NguonTienRa</strong>
+                    </div>
+                </div>
+
+                <!-- Nguồn vào của tiền -->
+                <div class="py-2 border-bottom">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-secondary small">📥 Nguồn vào của tiền (Nhận vào):</span>
+                        <strong class="text-success small text-end">@Model.NguonTienVao</strong>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-secondary small">Người thực hiện:</span>
+                    <strong class="text-dark">@Model.HoTen</strong>
+                </div>
+
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-secondary small">Mục đích thanh toán:</span>
+                    <span class="badge bg-secondary">
+                        @(Model.LoaiThanhToan switch
+                        {
+                            "PhiThe" => "Phí làm thẻ thư viện",
+                            "TienCoc" => "Tiền cọc mượn sách",
+                            "HoanCoc" => "Hoàn trả tiền cọc mượn sách",
+                            "PhatQuaHan" => "Phạt trễ hạn trả sách",
+                            "BoiThuong" => "Bồi thường hư hỏng / mất sách",
+                            _ => Model.LoaiThanhToan
+                        })
+                    </span>
+                </div>
+
+                @if (Model.MaPhieuMuon.HasValue)
+                {
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-secondary small">Phiếu mượn liên quan:</span>
+                        <a asp-controller="PhieuMuon" asp-action="Details" asp-route-id="@Model.MaPhieuMuon.Value" class="badge bg-info text-dark text-decoration-none">
+                            Phiếu #@Model.MaPhieuMuon.Value ↗
+                        </a>
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.ThongTinTaiKhoanDoiUng))
+                {
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-secondary small">TK đối ứng nhận tiền:</span>
+                        <span class="text-dark small fw-semibold">@Model.ThongTinTaiKhoanDoiUng</span>
+                    </div>
+                }
+
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-secondary small">Số tiền giao dịch:</span>
+                    <strong class="@(laNguonRa ? "text-danger" : "text-success") fs-4">
+                        @(laNguonRa ? "-" : "+")@Model.SoTien.ToString("N0") VNĐ
+                    </strong>
+                </div>
+
+                <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span class="text-secondary small">Trạng thái giao dịch:</span>
+                    <span class="badge @(Model.TrangThai == "Đã hoàn thành" ? "bg-success" : "bg-warning text-dark")">
+                        @Model.TrangThai
+                    </span>
+                </div>
+
+                <div class="d-flex justify-content-between py-2">
+                    <span class="text-secondary small">Nội dung / Ghi chú:</span>
+                    <code class="text-primary fw-bold">@Model.NoiDungChuyenKhoan</code>
+                </div>
+            </div>
+
+            <div class="alert alert-info py-2 px-3 small text-start mb-4">
+                <strong>📌 Chứng từ điện tử:</strong> Dữ liệu nguồn ra &amp; nguồn vào đã được lưu trữ vào hệ thống kế toán lưu thông thư viện để phục vụ công tác đối soát và quản lý ngân quỹ.
+            </div>
+
+            <div class="d-flex flex-wrap align-items-center justify-content-center gap-2">
+                @if (Model.MaPhieuMuon.HasValue)
+                {
+                    <a asp-controller="PhieuMuon" asp-action="Details" asp-route-id="@Model.MaPhieuMuon.Value" class="btn btn-outline-primary px-3 py-2 fw-semibold">
+                        Quay lại Phiếu mượn #@Model.MaPhieuMuon.Value
+                    </a>
+                }
+                <a asp-action="LichSu" class="btn btn-primary-custom px-4 py-2 fw-semibold">
+                    Xem Sổ Quản Lý Dòng Tiền
+                </a>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary px-4 py-2">
+                    Về Trang Chủ
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
