@@ -16,3 +16,6 @@
 *.rar
 *.zip
 *.7z
+
+## Helper script
+DAY_CODE_LEN_GITHUB.bat
