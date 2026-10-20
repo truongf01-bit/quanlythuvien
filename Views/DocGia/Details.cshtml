@@ -1,0 +1,89 @@
+@model QuanLyThuVien.Models.DocGia
+@{
+    ViewData["Title"] = "Chi tiết Độc giả";
+}
+
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold">🎓 HỒ SƠ ĐỘC GIẢ: @Model.HoTen</h5>
+        <span class="badge bg-light text-dark">Mã ĐG: #@Model.MaDocGia</span>
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <p class="mb-2"><strong>👤 Họ và tên:</strong> @Model.HoTen</p>
+                <p class="mb-2"><strong>🔑 Tài khoản liên kết:</strong> <code>@Model.TaiKhoan?.TenDangNhap</code></p>
+                <p class="mb-2"><strong>🎂 Ngày sinh:</strong> @Model.NgaySinh.ToString("dd/MM/yyyy")</p>
+                <p class="mb-2"><strong>⚧ Giới tính:</strong> @Model.GioiTinh</p>
+            </div>
+            <div class="col-md-6">
+                <p class="mb-2"><strong>📞 Số điện thoại:</strong> @Model.SoDienThoai</p>
+                <p class="mb-2"><strong>✉️ Email:</strong> @Model.Email</p>
+                <p class="mb-2"><strong>📍 Địa chỉ:</strong> @Model.DiaChi</p>
+                <p class="mb-2">
+                    <strong>📅 Ngày đăng ký:</strong> @Model.NgayDangKy.ToString("dd/MM/yyyy") |
+                    <strong>Trạng thái:</strong>
+                    @if (Model.TrangThai == "Hoạt động")
+                    {
+                        <span class="badge bg-success">Hoạt động</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Bị khóa</span>
+                    }
+                </p>
+            </div>
+        </div>
+        <div class="mt-3 d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.MaDocGia" class="btn btn-warning fw-semibold">Sửa hồ sơ</a>
+            <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+        </div>
+    </div>
+</div>
+
+<h5 class="fw-bold text-dark mb-3">📋 Lịch sử Phiếu mượn của Độc giả (@Model.PhieuMuons.Count phiếu)</h5>
+@if (!Model.PhieuMuons.Any())
+{
+    <div class="alert alert-info">Độc giả này chưa có phiếu mượn nào.</div>
+}
+else
+{
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <table class="table table-bordered table-hover mb-0 align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Mã phiếu</th>
+                        <th>Ngày mượn</th>
+                        <th>Hạn trả</th>
+                        <th>Các đầu sách mượn</th>
+                        <th class="text-center">Trạng thái</th>
+                        <th class="text-center">Chi tiết</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var pm in Model.PhieuMuons.OrderByDescending(p => p.NgayMuon))
+                    {
+                        <tr>
+                            <td class="fw-bold">#@pm.MaPhieuMuon</td>
+                            <td>@pm.NgayMuon.ToString("dd/MM/yyyy")</td>
+                            <td>@pm.HanTra.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @foreach (var ct in pm.ChiTietPhieuMuons)
+                                {
+                                    <div>• @ct.Sach?.TenSach (SL: @ct.SoLuongMuon)</div>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-info text-dark">@pm.TrangThai</span>
+                            </td>
+                            <td class="text-center">
+                                <a asp-controller="PhieuMuon" asp-action="Details" asp-route-id="@pm.MaPhieuMuon" class="btn btn-sm btn-outline-primary">Xem phiếu</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

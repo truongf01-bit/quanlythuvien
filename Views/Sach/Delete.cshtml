@@ -1,0 +1,59 @@
+@model QuanLyThuVien.Models.Sach
+@{
+    ViewData["Title"] = "Xóa Sách";
+}
+
+<div class="card shadow-sm border-danger mx-auto" style="max-width: 700px;">
+    <div class="card-header bg-danger text-white">
+        <h5 class="mb-0 fw-bold">🗑️ XÁC NHẬN XÓA ĐẦU SÁCH</h5>
+    </div>
+    <div class="card-body p-4">
+        @if (Model.ChiTietPhieuMuons.Any())
+        {
+            <div class="alert alert-warning">
+                <strong>⚠️ Cảnh báo ràng buộc dữ liệu:</strong> Đầu sách này đã phát sinh trong <strong>@Model.ChiTietPhieuMuons.Count chi tiết phiếu mượn</strong>.
+                Để bảo toàn lịch sử mượn trả, hệ thống không xóa cứng mà khuyến nghị chuyển trạng thái sang <em>Ngừng phục vụ</em>.
+            </div>
+        }
+        else
+        {
+            <p class="text-danger fw-semibold">Bạn có chắc chắn muốn xóa đầu sách này khỏi thư viện?</p>
+        }
+
+        <dl class="row mb-0">
+            <dt class="col-sm-4">Mã sách:</dt>
+            <dd class="col-sm-8">#@Model.MaSach</dd>
+
+            <dt class="col-sm-4">Tên sách:</dt>
+            <dd class="col-sm-8 fw-bold text-primary">@Model.TenSach</dd>
+
+            <dt class="col-sm-4">Thể loại:</dt>
+            <dd class="col-sm-8">@Model.TheLoai?.TenTheLoai</dd>
+
+            <dt class="col-sm-4">Tác giả:</dt>
+            <dd class="col-sm-8">@Model.TacGia</dd>
+
+            <dt class="col-sm-4">Nhà xuất bản / Năm XB:</dt>
+            <dd class="col-sm-8">@Model.NhaXuatBan (@Model.NamXuatBan)</dd>
+
+            <dt class="col-sm-4">Số lượng còn / Tổng:</dt>
+            <dd class="col-sm-8">@Model.SoLuongCon / @Model.SoLuong cuốn</dd>
+
+            <dt class="col-sm-4">Giá sách:</dt>
+            <dd class="col-sm-8 text-danger fw-bold">@Model.GiaSach.ToString("N0") VNĐ</dd>
+        </dl>
+
+        <form asp-action="Delete" method="post" class="mt-4 d-flex gap-2">
+            <input type="hidden" asp-for="MaSach" />
+            @if (!Model.ChiTietPhieuMuons.Any())
+            {
+                <button type="submit" class="btn btn-danger fw-bold px-4">Xác nhận xóa</button>
+            }
+            else
+            {
+                <a asp-action="Edit" asp-route-id="@Model.MaSach" class="btn btn-warning fw-semibold">Chuyển sang Sửa trạng thái</a>
+            }
+            <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+        </form>
+    </div>
+</div>

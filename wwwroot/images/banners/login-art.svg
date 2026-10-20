@@ -1,0 +1,29 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 700" width="100%" height="100%">
+  <defs>
+    <linearGradient id="loginGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="60%" stop-color="#1e3a8a" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+  </defs>
+  <rect width="600" height="700" fill="url(#loginGrad)" />
+  <circle cx="500" cy="150" r="160" fill="#38bdf8" opacity="0.15" />
+  <circle cx="100" cy="600" r="180" fill="#6366f1" opacity="0.12" />
+
+  <g transform="translate(100, 120)">
+    <circle cx="200" cy="100" r="80" fill="rgba(255,255,255,0.06)" stroke="#38bdf8" stroke-width="2" />
+    <path d="M 140,100 Q 200,70 200,120 Q 200,70 260,100 L 260,160 Q 200,130 200,180 Q 200,130 140,160 Z" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linejoin="round" />
+    <line x1="200" y1="120" x2="200" y2="180" stroke="#38bdf8" stroke-width="4" />
+
+    <text x="200" y="230" font-family="'Segoe UI', Arial, sans-serif" font-size="24" font-weight="800" fill="#ffffff" text-anchor="middle">THƯ VIỆN ĐẠI HỌC</text>
+    <text x="200" y="265" font-family="'Segoe UI', Arial, sans-serif" font-size="13.5" fill="#93c5fd" text-anchor="middle">CỔNG TRA CỨU &amp; MƯỢN TRẢ TÀI LIỆU</text>
+
+    <g transform="translate(0, 300)">
+      <rect x="10" y="0" width="380" height="170" rx="12" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.12)" />
+      <text x="30" y="38" font-family="'Segoe UI', Arial, sans-serif" font-size="14" font-weight="700" fill="#38bdf8">📚 Không gian Tri thức &amp; Học tập</text>
+      <text x="30" y="72" font-family="'Segoe UI', Arial, sans-serif" font-size="13" fill="rgba(255,255,255,0.85)">• Tra cứu nhanh hàng ngàn đầu sách chuyên ngành</text>
+      <text x="30" y="102" font-family="'Segoe UI', Arial, sans-serif" font-size="13" fill="rgba(255,255,255,0.85)">• Đăng ký mượn sách trực tuyến thuận tiện, minh bạch</text>
+      <text x="30" y="132" font-family="'Segoe UI', Arial, sans-serif" font-size="13" fill="rgba(255,255,255,0.85)">• Theo dõi hạn trả sách tự động, không lo trễ hạn</text>
+    </g>
+  </g>
+</svg>

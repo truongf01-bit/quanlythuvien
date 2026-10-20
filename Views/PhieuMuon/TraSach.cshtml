@@ -1,0 +1,61 @@
+@model QuanLyThuVien.Models.PhieuMuon
+@{
+    ViewData["Title"] = "Xác nhận Trả sách";
+}
+
+<div class="card shadow-sm border-0 mx-auto" style="max-width: 850px;">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0 fw-bold">📥 XÁC NHẬN TRẢ SÁCH - PHIẾU #@Model.MaPhieuMuon</h5>
+    </div>
+    <div class="card-body p-4">
+        <div class="alert alert-light border mb-3">
+            <strong>🎓 Độc giả:</strong> @Model.DocGia?.HoTen |
+            <strong>📅 Ngày mượn:</strong> @Model.NgayMuon.ToString("dd/MM/yyyy") |
+            <strong>⏰ Hạn trả:</strong> @Model.HanTra.ToString("dd/MM/yyyy")
+        </div>
+
+        <form asp-action="TraSach" asp-route-id="@Model.MaPhieuMuon" method="post">
+            <div class="mb-3" style="max-width: 300px;">
+                <label class="form-label fw-semibold">📅 Ngày trả thực tế <span class="text-danger">*</span></label>
+                <input type="date" name="ngayTraThucTe" value="@DateTime.Today.ToString("yyyy-MM-dd")" class="form-control" required />
+            </div>
+
+            <h6 class="fw-bold text-primary mb-2">📚 Cập nhật tình trạng sách khi trả</h6>
+            <table class="table table-bordered align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Mã sách</th>
+                        <th>Tên sách</th>
+                        <th class="text-center">SL Mượn</th>
+                        <th>Tình trạng sách khi trả</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ct in Model.ChiTietPhieuMuons)
+                    {
+                        <tr>
+                            <td>
+                                #@ct.MaSach
+                                <input type="hidden" name="maSachs" value="@ct.MaSach" />
+                            </td>
+                            <td class="fw-semibold">@ct.Sach?.TenSach</td>
+                            <td class="text-center fw-bold">@ct.SoLuongMuon cuốn</td>
+                            <td>
+                                <select name="tinhTrangTras" class="form-select form-select-sm">
+                                    <option value="Tốt">Tốt (Hoàn lại số lượng vào kho)</option>
+                                    <option value="Hư hỏng nhẹ">Hư hỏng nhẹ (Hoàn lại số lượng vào kho)</option>
+                                    <option value="Mất sách">Mất sách (Không hoàn lại kho)</option>
+                                </select>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-success fw-bold px-4">✔ Hoàn tất Nhận trả sách</button>
+                <a asp-action="Details" asp-route-id="@Model.MaPhieuMuon" class="btn btn-secondary">Hủy / Quay lại</a>
+            </div>
+        </form>
+    </div>
+</div>

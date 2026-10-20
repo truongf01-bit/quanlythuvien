@@ -1,0 +1,83 @@
+@model QuanLyThuVien.ViewModels.DangKyMuonViewModel
+@{
+    ViewData["Title"] = "Đăng ký Mượn Sách";
+}
+
+<div class="card border-0 shadow-sm mx-auto" style="max-width: 860px;">
+    <div class="card-header bg-primary-custom text-white py-3">
+        <h5 class="mb-0 fw-bold">Đăng Ký Mượn Tài Liệu Trực Tuyến</h5>
+    </div>
+    <div class="card-body p-4">
+        @if (Model.DocGiaHienTai != null)
+        {
+            <div class="alert alert-light border d-flex align-items-center justify-content-between flex-wrap gap-2 py-2 mb-4">
+                <div>
+                    <span class="text-secondary small">Độc giả đăng ký:</span>
+                    <strong class="text-dark ms-1">@Model.DocGiaHienTai.HoTen</strong>
+                    <span class="badge bg-secondary bg-opacity-10 text-secondary ms-1">Mã ĐG: #@Model.DocGiaHienTai.MaDocGia</span>
+                </div>
+                <div class="small text-muted">
+                    Số điện thoại: <strong>@Model.DocGiaHienTai.SoDienThoai</strong>
+                </div>
+            </div>
+        }
+
+        <form asp-action="DangKyMuon" method="post">
+            <div asp-validation-summary="All" class="text-danger mb-3 small fw-semibold"></div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label asp-for="NgayMuon" class="form-label small fw-semibold text-secondary">Ngày đăng ký mượn</label>
+                    <input type="date" value="@DateTime.Today.ToString("yyyy-MM-dd")" class="form-control form-control-sm bg-light" readonly />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="HanTra" class="form-label small fw-semibold text-secondary">Hạn ngày trả sách</label> <span class="text-danger">*</span>
+                    <input asp-for="HanTra" type="date" class="form-control form-control-sm" />
+                    <span asp-validation-for="HanTra" class="text-danger small"></span>
+                    <small class="text-muted" style="font-size: 0.78rem;">Quy định thư viện: Thời hạn mượn sách tối đa không quá 30 ngày.</small>
+                </div>
+            </div>
+
+            <h6 class="fw-bold text-dark border-bottom pb-2 mb-3">
+                Danh Sách Đầu Sách Đăng Ký (Tối đa 03 đầu sách trong 1 phiếu)
+            </h6>
+
+            @for (int i = 0; i < Model.DanhSachChon.Count; i++)
+            {
+                <div class="row g-2 align-items-center mb-3 p-3 bg-light rounded-3 border">
+                    <div class="col-md-8">
+                        <label class="form-label small fw-semibold text-secondary mb-1">
+                            Đầu sách thứ @(i + 1) @(i == 0 ? "(Bắt buộc)" : "(Tùy chọn mượn thêm)")
+                        </label>
+                        <select asp-for="DanhSachChon[i].MaSach" class="form-select form-select-sm">
+                            <option value="">-- Chọn đầu sách --</option>
+                            @foreach (var s in Model.DanhSachSachPhucVu)
+                            {
+                                <option value="@s.MaSach">
+                                    [@s.TheLoai?.TenTheLoai] @s.TenSach - @s.TacGia (Còn @s.SoLuongCon cuốn)
+                                </option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-semibold text-secondary mb-1">Số lượng mượn (cuốn)</label>
+                        <input asp-for="DanhSachChon[i].SoLuongMuon" type="number" min="1" max="5" class="form-control form-control-sm" />
+                    </div>
+                </div>
+            }
+
+            <div class="d-flex gap-2 mt-4 pt-3 border-top">
+                <button type="submit" class="btn btn-primary-custom px-4 fw-semibold">
+                    Xác Nhận Đăng Ký Mượn
+                </button>
+                <a asp-controller="Sach" asp-action="Index" class="btn btn-outline-secondary">
+                    Quay lại danh mục sách
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

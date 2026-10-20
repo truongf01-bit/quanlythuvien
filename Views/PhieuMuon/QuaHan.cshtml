@@ -1,0 +1,72 @@
+@model IEnumerable<QuanLyThuVien.Models.PhieuMuon>
+@{
+    ViewData["Title"] = "Danh sách Quá hạn";
+    DateTime homNay = DateTime.Today;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h3 class="fw-bold text-danger mb-0">⚠️ DANH SÁCH PHIẾU MƯỢN QUÁ HẠN</h3>
+        <small class="text-muted">Các phiếu đang ở trạng thái "Đang mượn" và có Hạn trả nhỏ hơn ngày hiện tại (@homNay.ToString("dd/MM/yyyy"))</small>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-primary fw-semibold">Về Quản lý Phiếu mượn</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-success text-center py-4">
+        <h5 class="fw-bold mb-0">🎉 Tuyệt vời! Hiện tại không có phiếu mượn nào bị quá hạn.</h5>
+    </div>
+}
+else
+{
+    <div class="card shadow-sm border-danger">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered mb-0 align-middle">
+                    <thead class="table-danger">
+                        <tr>
+                            <th>Mã phiếu</th>
+                            <th>Độc giả</th>
+                            <th>Liên hệ</th>
+                            <th>Ngày mượn</th>
+                            <th>Hạn trả</th>
+                            <th class="text-center">Số ngày quá hạn</th>
+                            <th>Sách chưa trả</th>
+                            <th class="text-center" style="width: 170px;">Xử lý</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var pm in Model)
+                        {
+                            int soNgayTre = (homNay - pm.HanTra.Date).Days;
+                            <tr>
+                                <td class="fw-bold">#@pm.MaPhieuMuon</td>
+                                <td class="fw-semibold text-primary">@pm.DocGia?.HoTen</td>
+                                <td class="small">
+                                    📞 @pm.DocGia?.SoDienThoai<br />
+                                    ✉️ @pm.DocGia?.Email
+                                </td>
+                                <td>@pm.NgayMuon.ToString("dd/MM/yyyy")</td>
+                                <td class="text-danger fw-bold">@pm.HanTra.ToString("dd/MM/yyyy")</td>
+                                <td class="text-center">
+                                    <span class="badge bg-danger fs-6">@soNgayTre ngày</span>
+                                </td>
+                                <td>
+                                    @foreach (var ct in pm.ChiTietPhieuMuons)
+                                    {
+                                        <div>• <strong>@ct.Sach?.TenSach</strong> (SL: @ct.SoLuongMuon)</div>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <a asp-action="TraSach" asp-route-id="@pm.MaPhieuMuon" class="btn btn-sm btn-success fw-semibold">Nhận trả sách</a>
+                                    <a asp-action="Details" asp-route-id="@pm.MaPhieuMuon" class="btn btn-sm btn-outline-secondary">Chi tiết</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

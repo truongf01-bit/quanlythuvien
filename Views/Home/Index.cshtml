@@ -1,0 +1,155 @@
+@model IEnumerable<QuanLyThuVien.Models.Sach>
+@{
+    ViewData["Title"] = "Trang chủ Thư viện";
+    var danhSachTheLoai = ViewBag.DanhSachTheLoai as List<QuanLyThuVien.Models.TheLoai> ?? new List<QuanLyThuVien.Models.TheLoai>();
+}
+
+<div class="hero-library-banner p-4 p-lg-5 mb-5 shadow-sm position-relative">
+    <div class="row align-items-center position-relative" style="z-index: 2;">
+        <div class="col-lg-8">
+            <span class="badge bg-warning text-dark px-3 py-1 fw-bold rounded-pill mb-3">
+                CỔNG THÔNG TIN HỌC THUẬT UNETI
+            </span>
+            <h1 class="display-6 fw-bold mb-3 text-white">
+                Thư Viện Số &amp; Tra Cứu Tài Liệu
+            </h1>
+            <p class="lead fs-6 text-white-50 mb-4 pe-lg-4">
+                Hệ thống hỗ trợ sinh viên và giảng viên tra cứu giáo trình, tài liệu chuyên ngành Công nghệ thông tin, Kinh tế, Ngoại ngữ và đăng ký mượn sách trực tuyến nhanh chóng.
+            </p>
+
+            <form asp-controller="Sach" asp-action="Index" method="get" class="d-flex gap-2 bg-white p-2 rounded-pill shadow-sm" style="max-width: 620px;">
+                <input type="text" name="tuKhoa" class="form-control border-0 rounded-pill ps-3" placeholder="Nhập tên tài liệu, sách hoặc tác giả cần tìm..." />
+                <button type="submit" class="btn btn-primary-custom rounded-pill px-4 fw-semibold text-nowrap">
+                    Tìm kiếm
+                </button>
+            </form>
+        </div>
+
+        <div class="col-lg-4 mt-4 mt-lg-0">
+            <div class="hero-stats-box">
+                <div class="fw-bold text-primary border-bottom pb-2 mb-3 d-flex align-items-center justify-content-between">
+                    <span>Quy mô Tài nguyên</span>
+                    <span class="badge bg-primary bg-opacity-10 text-primary">Cập nhật 2026</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-secondary small">Chuyên mục thể loại:</span>
+                    <strong class="text-dark">@ViewBag.TongTheLoai lĩnh vực</strong>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-secondary small">Tổng số đầu sách:</span>
+                    <strong class="text-primary">@ViewBag.TongDauSach tài liệu</strong>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-secondary small">Độc giả sinh viên:</span>
+                    <strong class="text-success">@ViewBag.TongDocGia thành viên</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h4 class="fw-bold text-dark mb-0">Khám Phá Theo Chuyên Ngành</h4>
+            <small class="text-muted">Các phân mục tài liệu học tập được sắp xếp theo từng khoa chuyên ngành</small>
+        </div>
+        <a asp-controller="Sach" asp-action="Index" class="btn btn-sm btn-outline-primary fw-semibold">
+            Xem toàn bộ &rarr;
+        </a>
+    </div>
+
+    <div class="row g-3">
+        @for (int i = 0; i < danhSachTheLoai.Count; i++)
+        {
+            var tl = danhSachTheLoai[i];
+            int catIconNum = (i % 6) + 1;
+            <div class="col-6 col-md-4 col-lg-2">
+                <a asp-controller="Sach" asp-action="Index" asp-route-maTheLoai="@tl.MaTheLoai" class="category-card h-100">
+                    <div class="mb-2">
+                        <img src="~/images/categories/cat-@(catIconNum).svg" alt="@tl.TenTheLoai" style="width: 48px; height: 48px;" />
+                    </div>
+                    <div class="fw-bold small text-dark mb-1">@tl.TenTheLoai</div>
+                    <div class="text-muted small">@tl.Sachs.Count tài liệu</div>
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h4 class="fw-bold text-dark mb-0">Tài Liệu Mới &amp; Phổ Biến</h4>
+            <small class="text-muted">Các đầu sách giáo trình vừa được cập nhật tại thư viện</small>
+        </div>
+        <a asp-controller="Sach" asp-action="Index" class="btn btn-sm btn-outline-primary fw-semibold">
+            Xem danh mục sách &rarr;
+        </a>
+    </div>
+
+    <div class="row g-4">
+        @foreach (var s in Model)
+        {
+            var imgCover = string.IsNullOrEmpty(s.HinhAnh) ? "/images/books/default-book.svg" : s.HinhAnh;
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="book-card">
+                    <div class="book-cover-wrapper">
+                        <img src="@imgCover"
+                             alt="@s.TenSach"
+                             class="book-cover-img"
+                             onerror="this.src='/images/books/default-book.svg'" />
+                        <span class="badge bg-dark bg-opacity-75 book-badge-overlay small">
+                            @s.TheLoai?.TenTheLoai
+                        </span>
+                    </div>
+
+                    <div class="p-3 d-flex flex-column flex-grow-1">
+                        <h6 class="fw-bold text-dark mb-1 text-truncate" title="@s.TenSach">
+                            <a asp-controller="Sach" asp-action="Details" asp-route-id="@s.MaSach" class="text-dark text-decoration-none">
+                                @s.TenSach
+                            </a>
+                        </h6>
+
+                        <p class="text-muted small mb-2 text-truncate" title="@s.TacGia">
+                            Tác giả: <strong>@s.TacGia</strong>
+                        </p>
+
+                        <div class="d-flex justify-content-between align-items-center small mb-3">
+                            <span class="text-muted">NXB @s.NamXuatBan</span>
+                            @if (s.SoLuongCon > 0)
+                            {
+                                <span class="badge bg-success bg-opacity-10 text-success fw-semibold">
+                                    Còn @s.SoLuongCon cuốn
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger bg-opacity-10 text-danger fw-semibold">
+                                    Tạm hết
+                                </span>
+                            }
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center pt-2 border-top mt-auto">
+                            <span class="fw-bold text-primary small">
+                                @s.GiaSach.ToString("N0") đ
+                            </span>
+                            <div class="d-flex gap-1">
+                                <a asp-controller="Sach" asp-action="Details" asp-route-id="@s.MaSach" class="btn btn-xs btn-outline-secondary py-1 px-2 small">
+                                    Chi tiết
+                                </a>
+                                @if (s.TrangThai == "Đang phục vụ" && s.SoLuongCon > 0)
+                                {
+                                    <a asp-controller="MuonSach" asp-action="DangKyMuon" asp-route-maSach="@s.MaSach" class="btn btn-xs btn-primary-custom py-1 px-2 small">
+                                        Mượn
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

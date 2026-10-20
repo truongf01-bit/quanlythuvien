@@ -1,0 +1,239 @@
+@model QuanLyThuVien.ViewModels.ThongKeViewModel
+@{
+    ViewData["Title"] = "Báo cáo Thống kê Thư viện";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h3 class="fw-bold text-dark mb-1">Báo Cáo Thống Kê &amp; Phân Tích Dữ Liệu</h3>
+        <small class="text-muted">Tổng hợp và kết xuất dữ liệu quản trị lưu thông thư viện (sử dụng LINQ GroupBy, Count, Sum, OrderBy)</small>
+    </div>
+    <a asp-action="Dashboard" class="btn btn-outline-secondary">
+        &larr; Về Dashboard
+    </a>
+</div>
+
+<div class="row g-4">
+
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100 overflow-hidden">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="mb-0 fw-bold text-dark">Phân Bố Tài Liệu Theo Thể Loại</h6>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover mb-0 align-middle">
+                        <thead class="table-light small">
+                            <tr>
+                                <th>Thể loại</th>
+                                <th class="text-center">Số đầu sách</th>
+                                <th class="text-center">Tổng số cuốn</th>
+                                <th class="text-center">Còn trên kệ</th>
+                            </tr>
+                        </thead>
+                        <tbody class="small">
+                            @foreach (var item in Model.SachTheoTheLoai)
+                            {
+                                <tr>
+                                    <td class="fw-semibold">@item.TenTheLoai</td>
+                                    <td class="text-center"><span class="badge bg-secondary bg-opacity-10 text-secondary">@item.SoDauSach</span></td>
+                                    <td class="text-center">@item.TongSoBanSach</td>
+                                    <td class="text-center text-success fw-bold">@item.TongSoSachCon</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100 overflow-hidden">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="mb-0 fw-bold text-dark">Trạng Thái Lưu Thông Phiếu Mượn</h6>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover mb-0 align-middle">
+                        <thead class="table-light small">
+                            <tr>
+                                <th>Trạng thái phiếu mượn</th>
+                                <th class="text-center">Số lượng phiếu</th>
+                            </tr>
+                        </thead>
+                        <tbody class="small">
+                            @foreach (var item in Model.PhieuTheoTrangThai)
+                            {
+                                <tr>
+                                    <td class="fw-semibold">
+                                        @if (item.TrangThai == "Chờ xác nhận")
+                                        {
+                                            <span class="badge bg-warning bg-opacity-25 text-dark me-1">Chờ xác nhận</span>
+                                        }
+                                        else if (item.TrangThai == "Đang mượn")
+                                        {
+                                            <span class="badge bg-primary bg-opacity-10 text-primary me-1">Đang mượn</span>
+                                        }
+                                        else if (item.TrangThai == "Đã trả")
+                                        {
+                                            <span class="badge bg-success bg-opacity-10 text-success me-1">Đã trả</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary bg-opacity-10 text-secondary me-1">Đã hủy</span>
+                                        }
+                                        @item.TrangThai
+                                    </td>
+                                    <td class="text-center fw-bold text-dark">@item.SoLuongPhieu phiếu</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100 overflow-hidden">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="mb-0 fw-bold text-primary">Top 5 Tài Liệu Được Mượn Nhiều Nhất</h6>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover mb-0 align-middle">
+                        <thead class="table-light small">
+                            <tr>
+                                <th style="width: 45px;">Hạng</th>
+                                <th>Tên đầu sách &amp; Tác giả</th>
+                                <th class="text-center">Số lượt phiếu</th>
+                                <th class="text-center">Tổng cuốn mượn</th>
+                            </tr>
+                        </thead>
+                        <tbody class="small">
+                            @{ int rank = 1; }
+                            @foreach (var item in Model.SachMuonNhieuNhat)
+                            {
+                                <tr>
+                                    <td class="text-center fw-bold">
+                                        @if (rank == 1) { <span class="badge bg-warning text-dark">1</span> }
+                                        else if (rank == 2) { <span class="badge bg-secondary text-white">2</span> }
+                                        else if (rank == 3) { <span class="badge bg-danger bg-opacity-75 text-white">3</span> }
+                                        else { <span>@(rank)</span> }
+                                        @{ rank++; }
+                                    </td>
+                                    <td>
+                                        <div class="fw-semibold text-dark">@item.TenSach</div>
+                                        <small class="text-muted">@item.TacGia</small>
+                                    </td>
+                                    <td class="text-center">@item.SoLuotPhieuMuon lượt</td>
+                                    <td class="text-center"><span class="badge bg-success bg-opacity-10 text-success fw-bold">@item.TongSoCuonDuocMuon cuốn</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100 overflow-hidden">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="mb-0 fw-bold text-dark">Lưu Lượng Mượn Sách Theo Từng Tháng</h6>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover mb-0 align-middle">
+                        <thead class="table-light small">
+                            <tr>
+                                <th>Tháng / Năm</th>
+                                <th class="text-center">Số phiếu mượn phát sinh</th>
+                                <th class="text-center">Tổng số cuốn tài liệu</th>
+                            </tr>
+                        </thead>
+                        <tbody class="small">
+                            @foreach (var item in Model.PhieuMuonTheoThang)
+                            {
+                                <tr>
+                                    <td class="fw-semibold">Tháng @item.Thang.ToString("00")/@item.Nam</td>
+                                    <td class="text-center fw-bold">@item.SoPhieuMuon phiếu</td>
+                                    <td class="text-center text-primary fw-bold">@item.TongSoSachMuon cuốn</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100 overflow-hidden">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="mb-0 fw-bold text-dark">Chi Tiết Lượt Mượn Theo Từng Đầu Sách</h6>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive" style="max-height: 320px;">
+                    <table class="table table-bordered table-hover table-sm mb-0 align-middle">
+                        <thead class="table-light small">
+                            <tr>
+                                <th style="width: 50px;">Mã</th>
+                                <th>Tên đầu sách</th>
+                                <th class="text-center">Lượt mượn</th>
+                                <th class="text-center">Tổng cuốn</th>
+                            </tr>
+                        </thead>
+                        <tbody class="small">
+                            @foreach (var item in Model.LuotMuonTheoSach)
+                            {
+                                <tr>
+                                    <td>#@item.MaSach</td>
+                                    <td class="fw-semibold">@item.TenSach</td>
+                                    <td class="text-center">@item.SoLuotPhieuMuon</td>
+                                    <td class="text-center fw-bold text-primary">@item.TongSoCuonDuocMuon</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100 overflow-hidden">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="mb-0 fw-bold text-dark">Thống Kê Tần Suất Mượn Theo Độc Giả</h6>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive" style="max-height: 320px;">
+                    <table class="table table-bordered table-hover table-sm mb-0 align-middle">
+                        <thead class="table-light small">
+                            <tr>
+                                <th style="width: 65px;">Mã ĐG</th>
+                                <th>Họ và tên độc giả</th>
+                                <th>Điện thoại</th>
+                                <th class="text-center">Số phiếu</th>
+                                <th class="text-center">Tổng cuốn</th>
+                            </tr>
+                        </thead>
+                        <tbody class="small">
+                            @foreach (var item in Model.LuotMuonTheoDocGia)
+                            {
+                                <tr>
+                                    <td>#@item.MaDocGia</td>
+                                    <td class="fw-semibold">@item.HoTen</td>
+                                    <td>@item.SoDienThoai</td>
+                                    <td class="text-center fw-bold">@item.SoPhieuMuon</td>
+                                    <td class="text-center text-success fw-bold">@item.TongSachDaMuon</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

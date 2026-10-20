@@ -1,0 +1,57 @@
+@model IEnumerable<QuanLyThuVien.Models.TheLoai>
+@{
+    ViewData["Title"] = "Quản lý Thể loại sách";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h3 class="fw-bold text-primary mb-0">🗂️ QUẢN LÝ THỂ LOẠI SÁCH</h3>
+        <small class="text-muted">Danh sách các thể loại sách trong thư viện</small>
+    </div>
+    <a asp-action="Create" class="btn btn-primary fw-bold">+ Thêm Thể loại mới</a>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <table class="table table-hover table-bordered mb-0 align-middle">
+            <thead class="table-primary">
+                <tr>
+                    <th style="width: 90px;">Mã TL</th>
+                    <th>Tên thể loại</th>
+                    <th>Mô tả</th>
+                    <th class="text-center" style="width: 130px;">Số đầu sách</th>
+                    <th class="text-center" style="width: 140px;">Trạng thái</th>
+                    <th class="text-center" style="width: 220px;">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="fw-bold">#@item.MaTheLoai</td>
+                        <td class="fw-semibold text-primary">@item.TenTheLoai</td>
+                        <td>@(string.IsNullOrEmpty(item.MoTa) ? "Không có mô tả" : item.MoTa)</td>
+                        <td class="text-center">
+                            <span class="badge bg-secondary">@item.Sachs.Count đầu sách</span>
+                        </td>
+                        <td class="text-center">
+                            @if (item.TrangThai == "Đang sử dụng")
+                            {
+                                <span class="badge bg-success">Đang sử dụng</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Ngừng sử dụng</span>
+                            }
+                        </td>
+                        <td class="text-center">
+                            <a asp-action="Details" asp-route-id="@item.MaTheLoai" class="btn btn-sm btn-outline-info">Chi tiết</a>
+                            <a asp-action="Edit" asp-route-id="@item.MaTheLoai" class="btn btn-sm btn-outline-warning">Sửa</a>
+                            <a asp-action="Delete" asp-route-id="@item.MaTheLoai" class="btn btn-sm btn-outline-danger">Xóa</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

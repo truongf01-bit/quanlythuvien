@@ -1,0 +1,251 @@
+@model QuanLyThuVien.ViewModels.ThanhToanViewModel
+@{
+    ViewData["Title"] = "Cổng Thanh Toán Trực Tuyến - QR Code MB Bank & MoMo";
+}
+
+<div class="container py-3">
+
+    <div class="text-center mb-4">
+        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-semibold mb-2">
+            HỆ THỐNG THANH TOÁN SỐ THƯ VIỆN ĐẠI HỌC UNETI
+        </span>
+        <h3 class="fw-bold text-dark mb-1">Cổng Thanh Toán Trực Tiếp Qua QR Code</h3>
+        <p class="text-muted small">Hỗ trợ quét mã thanh toán 24/7 bằng ứng dụng MB Bank (VietQR) và Ví điện tử MoMo</p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="mb-0 fw-bold text-dark d-flex align-items-center gap-2">
+                        <span>📝</span> Thông tin Giao dịch &amp; Người nộp phí
+                    </h6>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="XacNhan" method="post" id="formThanhToan">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary">Mục đích thanh toán</label>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="p-2 border rounded-3 bg-light fee-option cursor-pointer" onclick="chonLoaiPhi('PhiThe', 50000)">
+                                        <input class="form-check-input me-1" type="radio" asp-for="LoaiThanhToan" value="PhiThe" id="optPhiThe">
+                                        <label class="form-check-label small fw-semibold" for="optPhiThe">
+                                            🎫 Thẻ thư viện (50.000đ)
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-2 border rounded-3 bg-light fee-option cursor-pointer" onclick="chonLoaiPhi('TienCoc', 100000)">
+                                        <input class="form-check-input me-1" type="radio" asp-for="LoaiThanhToan" value="TienCoc" id="optTienCoc">
+                                        <label class="form-check-label small fw-semibold" for="optTienCoc">
+                                            📚 Cọc giáo trình (100.000đ)
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-2 border rounded-3 bg-light fee-option cursor-pointer" onclick="chonLoaiPhi('PhatQuaHan', 20000)">
+                                        <input class="form-check-input me-1" type="radio" asp-for="LoaiThanhToan" value="PhatQuaHan" id="optPhatQuaHan">
+                                        <label class="form-check-label small fw-semibold" for="optPhatQuaHan">
+                                            ⚠️ Phạt trễ hạn (20.000đ)
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-2 border rounded-3 bg-light fee-option cursor-pointer" onclick="chonLoaiPhi('Khac', 0)">
+                                        <input class="form-check-input me-1" type="radio" asp-for="LoaiThanhToan" value="Khac" id="optKhac">
+                                        <label class="form-check-label small fw-semibold" for="optKhac">
+                                            💵 Số tiền tùy chỉnh
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="SoTien" class="form-label small fw-semibold text-secondary"></label>
+                            <div class="input-group">
+                                <input asp-for="SoTien" id="inputSoTien" type="number" step="1000" class="form-control form-control-lg fw-bold text-primary" required onchange="capNhatGiaTri()" />
+                                <span class="input-group-text fw-bold text-muted">VNĐ</span>
+                            </div>
+                            <span asp-validation-for="SoTien" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-7">
+                                <label asp-for="HoTen" class="form-label small fw-semibold text-secondary"></label>
+                                <input asp-for="HoTen" id="inputHoTen" class="form-control form-control-sm" placeholder="Họ và tên sinh viên..." required oninput="capNhatGiaTri()" />
+                                <span asp-validation-for="HoTen" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-5">
+                                <label asp-for="SoDienThoai" class="form-label small fw-semibold text-secondary"></label>
+                                <input asp-for="SoDienThoai" class="form-control form-control-sm" placeholder="09xxxx..." />
+                            </div>
+                        </div>
+
+                        @if (Model.MaPhieuMuon.HasValue)
+                        {
+                            <div class="alert alert-warning py-2 small mb-3">
+                                <strong>Phiếu mượn liên kết:</strong> #@Model.MaPhieuMuon.Value (Hệ thống sẽ cập nhật trạng thái phiếu này sau khi thanh toán).
+                                <input type="hidden" asp-for="MaPhieuMuon" />
+                            </div>
+                        }
+
+                        <div class="mb-4 p-3 bg-primary bg-opacity-10 border border-primary border-opacity-25 rounded-3">
+                            <label class="form-label small fw-bold text-primary mb-1">
+                                💬 Cú pháp nội dung chuyển khoản (Bắt buộc ghi chính xác):
+                            </label>
+                            <div class="d-flex align-items-center justify-content-between gap-2 mt-1">
+                                <input asp-for="NoiDungChuyenKhoan" id="inputNoiDung" class="form-control fw-bold font-monospace bg-white text-danger border-0" readonly />
+                                <button type="button" class="btn btn-outline-primary btn-sm flex-shrink-0" onclick="copyNoiDung()">
+                                    📋 Sao chép
+                                </button>
+                            </div>
+                            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">
+                                * Vui lòng sao chép chính xác nội dung trên vào ứng dụng ngân hàng để hệ thống tự động gạch nợ.
+                            </small>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg fs-6 py-2 fw-bold">
+                                ✅ Tôi Đã Quét Mã &amp; Chuyển Khoản Thành Công
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white py-2 border-bottom">
+
+                    <ul class="nav nav-pills nav-fill" id="qrTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active fw-bold py-2 d-flex align-items-center justify-content-center gap-2" id="mbbank-tab" data-bs-toggle="pill" data-bs-target="#tabMBBank" type="button" role="tab">
+                                <span class="badge bg-danger rounded-circle p-1">★</span> MB Bank (VietQR)
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-bold py-2 d-flex align-items-center justify-content-center gap-2" id="momo-tab" data-bs-toggle="pill" data-bs-target="#tabMoMo" type="button" role="tab" style="color: #a50064;">
+                                <span class="fw-bold">M</span> Ví MoMo
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="card-body p-4 text-center">
+                    <div class="tab-content" id="qrTabsContent">
+
+                        <div class="tab-pane fade show active" id="tabMBBank" role="tabpanel">
+                            <div class="p-2 bg-light rounded-4 border d-inline-block shadow-sm mb-3">
+                                <img src="~/images/payments/qr-mbbank.png" alt="QR Code MB Bank" class="img-fluid rounded-3" style="max-height: 380px; width: auto;" />
+                            </div>
+
+                            <div class="bg-light p-3 rounded-3 text-start small">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-secondary">Ngân hàng:</span>
+                                    <strong class="text-dark">MB Bank (Ngân Hàng Quân Đội)</strong>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="text-secondary">Số tài khoản:</span>
+                                    <div class="d-flex align-items-center gap-1">
+                                        <code class="fs-6 text-primary fw-bold">21611611116</code>
+                                        <button type="button" class="btn btn-xs btn-outline-secondary py-0 px-2" onclick="copyText('21611611116', 'Đã sao chép số tài khoản MB Bank!')">Copy</button>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-secondary">Chủ tài khoản:</span>
+                                    <strong class="text-uppercase text-dark">NGUYEN XUAN TRUONG</strong>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-secondary">Số tiền:</span>
+                                    <strong class="text-danger fs-6 display-amount">50,000 đ</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="tabMoMo" role="tabpanel">
+                            <div class="p-2 bg-light rounded-4 border d-inline-block shadow-sm mb-3">
+                                <img src="~/images/payments/qr-momo.png" alt="QR Code MoMo" class="img-fluid rounded-3" style="max-height: 380px; width: auto;" />
+                            </div>
+
+                            <div class="bg-light p-3 rounded-3 text-start small">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-secondary">Ứng dụng:</span>
+                                    <strong style="color: #a50064;">Ví Điện Tử MoMo / VietQR</strong>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="text-secondary">Chủ tài khoản:</span>
+                                    <strong class="text-dark">Nguyễn Xuân Trường</strong>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="text-secondary">Số điện thoại:</span>
+                                    <span class="badge bg-secondary">*******498</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-secondary">Số tiền:</span>
+                                    <strong class="text-danger fs-6 display-amount">50,000 đ</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info py-2 px-3 small mt-3 mb-0 text-start">
+                        💡 <strong>Mẹo quét nhanh:</strong> Mở ứng dụng ngân hàng hoặc MoMo của bạn $\rightarrow$ Chọn tính năng <strong>Quét mã QR</strong> và hướng camera vào hình ảnh ở trên.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function chonLoaiPhi(loai, soTien) {
+            document.getElementById('inputSoTien').value = soTien > 0 ? soTien : '';
+            capNhatGiaTri();
+        }
+
+        function capNhatGiaTri() {
+            var soTien = document.getElementById('inputSoTien').value;
+            var formatted = new Intl.NumberFormat('vi-VN').format(soTien || 0) + ' đ';
+            var displays = document.querySelectorAll('.display-amount');
+            displays.forEach(function (el) {
+                el.innerText = formatted;
+            });
+
+            var hoTen = document.getElementById('inputHoTen').value.trim();
+            var slug = hoTen ? boDau(hoTen).replace(/\s+/g, '').toUpperCase() : 'SV';
+            var currentNoiDung = document.getElementById('inputNoiDung').value;
+
+            if (!currentNoiDung.includes('PM')) {
+                document.getElementById('inputNoiDung').value = 'UNETI ' + slug + ' ' + (soTien || 'PHI');
+            }
+        }
+
+        function boDau(str) {
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D");
+        }
+
+        function copyNoiDung() {
+            var noiDung = document.getElementById('inputNoiDung').value;
+            navigator.clipboard.writeText(noiDung).then(function() {
+                alert('Đã sao chép nội dung chuyển khoản: "' + noiDung + '"');
+            });
+        }
+
+        function copyText(txt, msg) {
+            navigator.clipboard.writeText(txt).then(function() {
+                alert(msg);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            capNhatGiaTri();
+        });
+    </script>
+}

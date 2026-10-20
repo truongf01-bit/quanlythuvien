@@ -1,0 +1,24 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 560" width="100%" height="100%">
+  <defs>
+    <linearGradient id="defGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="defSpine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="rgba(0,0,0,0.5)" />
+      <stop offset="40%" stop-color="rgba(255,255,255,0.2)" />
+      <stop offset="100%" stop-color="rgba(0,0,0,0.5)" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="560" rx="10" fill="url(#defGrad)" />
+  <rect x="0" y="0" width="28" height="560" rx="4" fill="url(#defSpine)" />
+  <rect x="42" y="24" width="334" height="512" rx="6" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.2" />
+  <g transform="translate(52, 180)">
+    <circle cx="148" cy="60" r="45" fill="rgba(255,255,255,0.05)" stroke="#38bdf8" stroke-width="2" />
+    <path d="M 120,60 Q 148,45 148,75 Q 148,45 176,60" fill="none" stroke="#38bdf8" stroke-width="2.5" />
+    <text x="148" y="140" font-family="'Segoe UI', Arial, sans-serif" font-size="20" font-weight="700" fill="#ffffff" text-anchor="middle">SÁCH THƯ VIỆN</text>
+    <text x="148" y="170" font-family="'Segoe UI', Arial, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Tài liệu học tập &amp; nghiên cứu</text>
+  </g>
+  <line x1="52" y1="480" x2="360" y2="480" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+  <text x="206" y="508" font-family="'Segoe UI', Arial, sans-serif" font-size="12" font-weight="600" fill="#38bdf8" text-anchor="middle">THƯ VIỆN ĐẠI HỌC</text>
+</svg>

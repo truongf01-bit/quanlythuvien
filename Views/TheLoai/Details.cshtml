@@ -1,0 +1,80 @@
+@model QuanLyThuVien.Models.TheLoai
+@{
+    ViewData["Title"] = "Chi tiết Thể loại";
+}
+
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold">🗂️ Chi tiết Thể loại: @Model.TenTheLoai</h5>
+        <span class="badge bg-light text-dark">Mã TL: #@Model.MaTheLoai</span>
+    </div>
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-3 fw-semibold text-muted">Tên thể loại:</div>
+            <div class="col-md-9 fw-bold fs-5 text-primary">@Model.TenTheLoai</div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-3 fw-semibold text-muted">Mô tả:</div>
+            <div class="col-md-9">@(string.IsNullOrEmpty(Model.MoTa) ? "Không có mô tả" : Model.MoTa)</div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-3 fw-semibold text-muted">Trạng thái:</div>
+            <div class="col-md-9">
+                @if (Model.TrangThai == "Đang sử dụng")
+                {
+                    <span class="badge bg-success">Đang sử dụng</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">Ngừng sử dụng</span>
+                }
+            </div>
+        </div>
+        <div class="d-flex gap-2 mt-3">
+            <a asp-action="Edit" asp-route-id="@Model.MaTheLoai" class="btn btn-warning fw-semibold">Sửa thể loại</a>
+            <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+        </div>
+    </div>
+</div>
+
+<h5 class="fw-bold text-dark mb-3">📚 Danh sách đầu sách thuộc thể loại này (@Model.Sachs.Count đầu sách)</h5>
+@if (!Model.Sachs.Any())
+{
+    <div class="alert alert-info">Chưa có đầu sách nào thuộc thể loại này.</div>
+}
+else
+{
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <table class="table table-bordered table-hover mb-0 align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Mã sách</th>
+                        <th>Tên sách</th>
+                        <th>Tác giả</th>
+                        <th>Năm XB</th>
+                        <th>Số lượng còn / Tổng</th>
+                        <th>Giá sách</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var s in Model.Sachs)
+                    {
+                        <tr>
+                            <td>#@s.MaSach</td>
+                            <td class="fw-semibold">
+                                <a asp-controller="Sach" asp-action="Details" asp-route-id="@s.MaSach">@s.TenSach</a>
+                            </td>
+                            <td>@s.TacGia</td>
+                            <td>@s.NamXuatBan</td>
+                            <td><strong>@s.SoLuongCon</strong> / @s.SoLuong</td>
+                            <td class="text-danger fw-semibold">@s.GiaSach.ToString("N0") VNĐ</td>
+                            <td><span class="badge bg-info text-dark">@s.TrangThai</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

@@ -1,0 +1,74 @@
+@model QuanLyThuVien.ViewModels.ThanhToanViewModel
+@{
+    ViewData["Title"] = "Xác nhận Thanh toán Thành công";
+}
+
+<div class="container py-4">
+    <div class="card border-0 shadow-sm mx-auto" style="max-width: 640px; border-radius: 16px;">
+        <div class="card-body p-4 p-md-5 text-center">
+            <div class="mb-3">
+                <span class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 text-success rounded-circle" style="width: 72px; height: 72px; font-size: 2.2rem;">
+                    ✓
+                </span>
+            </div>
+
+            <h4 class="fw-bold text-dark mb-1">Gửi Yêu Cầu Thanh Toán Thành Công!</h4>
+            <p class="text-muted small mb-4">Hệ thống thư viện UNETI đã ghi nhận thông tin giao dịch của bạn</p>
+
+            <div class="bg-light p-3 rounded-3 text-start mb-4 border">
+                <div class="d-flex justify-content-between py-1 border-bottom">
+                    <span class="text-secondary small">Mã giao dịch:</span>
+                    <strong class="text-primary font-monospace">@ViewBag.MaGiaoDich</strong>
+                </div>
+                <div class="d-flex justify-content-between py-1 border-bottom">
+                    <span class="text-secondary small">Thời gian ghi nhận:</span>
+                    <span class="text-dark small">@ViewBag.ThoiGian</span>
+                </div>
+                <div class="d-flex justify-content-between py-1 border-bottom">
+                    <span class="text-secondary small">Người nộp tiền:</span>
+                    <strong class="text-dark">@Model.HoTen</strong>
+                </div>
+                <div class="d-flex justify-content-between py-1 border-bottom">
+                    <span class="text-secondary small">Mục đích thanh toán:</span>
+                    <span class="badge bg-secondary">
+                        @(Model.LoaiThanhToan switch
+                        {
+                            "PhiThe" => "Phí làm thẻ thư viện",
+                            "TienCoc" => "Tiền cọc mượn giáo trình",
+                            "PhatQuaHan" => "Phạt trễ hạn trả sách",
+                            _ => "Phí dịch vụ thư viện"
+                        })
+                    </span>
+                </div>
+                @if (Model.MaPhieuMuon.HasValue)
+                {
+                    <div class="d-flex justify-content-between py-1 border-bottom">
+                        <span class="text-secondary small">Mã phiếu mượn:</span>
+                        <span class="badge bg-info text-dark">#@Model.MaPhieuMuon.Value</span>
+                    </div>
+                }
+                <div class="d-flex justify-content-between py-1 border-bottom">
+                    <span class="text-secondary small">Số tiền chuyển:</span>
+                    <strong class="text-danger fs-5">@Model.SoTien.ToString("N0") VNĐ</strong>
+                </div>
+                <div class="d-flex justify-content-between py-1">
+                    <span class="text-secondary small">Nội dung chuyển khoản:</span>
+                    <code class="text-primary fw-bold">@Model.NoiDungChuyenKhoan</code>
+                </div>
+            </div>
+
+            <div class="alert alert-info py-2 px-3 small text-start mb-4">
+                <strong>📌 Lưu ý đối soát:</strong> Thủ thư sẽ đối chiếu mã giao dịch trên sao kê tài khoản ngân hàng và cập nhật trạng thái phiếu mượn của bạn trong vòng 5 - 15 phút.
+            </div>
+
+            <div class="d-flex align-items-center justify-content-center gap-2">
+                <a asp-controller="MuonSach" asp-action="SachDangMuon" class="btn btn-primary-custom px-4 py-2 fw-semibold">
+                    Xem Sách Đang Mượn
+                </a>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary px-4 py-2">
+                    Về Trang Chủ
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

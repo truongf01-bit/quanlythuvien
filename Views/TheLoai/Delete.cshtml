@@ -1,0 +1,53 @@
+@model QuanLyThuVien.Models.TheLoai
+@{
+    ViewData["Title"] = "Xóa Thể loại";
+}
+
+<div class="card shadow-sm border-danger mx-auto" style="max-width: 650px;">
+    <div class="card-header bg-danger text-white">
+        <h5 class="mb-0 fw-bold">🗑️ XÁC NHẬN XÓA THỂ LOẠI SÁCH</h5>
+    </div>
+    <div class="card-body p-4">
+        @if (Model.Sachs.Any())
+        {
+            <div class="alert alert-warning">
+                <strong>⚠️ Cảnh báo ràng buộc dữ liệu:</strong> Thể loại này hiện đang có <strong>@Model.Sachs.Count đầu sách</strong> liên quan.
+                Theo quy định nghiệp vụ (Mục 5.5), hệ thống không cho phép xóa thể loại đang có sách. Bạn chỉ có thể đổi trạng thái sang <em>Ngừng sử dụng</em>.
+            </div>
+        }
+        else
+        {
+            <p class="text-danger fw-semibold">Bạn có chắc chắn muốn xóa thể loại này khỏi cơ sở dữ liệu?</p>
+        }
+
+        <dl class="row mb-0">
+            <dt class="col-sm-4">Mã thể loại:</dt>
+            <dd class="col-sm-8">#@Model.MaTheLoai</dd>
+
+            <dt class="col-sm-4">Tên thể loại:</dt>
+            <dd class="col-sm-8 fw-bold text-primary">@Model.TenTheLoai</dd>
+
+            <dt class="col-sm-4">Mô tả:</dt>
+            <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.MoTa) ? "Không có" : Model.MoTa)</dd>
+
+            <dt class="col-sm-4">Số đầu sách:</dt>
+            <dd class="col-sm-8"><span class="badge bg-secondary">@Model.Sachs.Count đầu sách</span></dd>
+
+            <dt class="col-sm-4">Trạng thái:</dt>
+            <dd class="col-sm-8">@Model.TrangThai</dd>
+        </dl>
+
+        <form asp-action="Delete" method="post" class="mt-4 d-flex gap-2">
+            <input type="hidden" asp-for="MaTheLoai" />
+            @if (!Model.Sachs.Any())
+            {
+                <button type="submit" class="btn btn-danger fw-bold px-4">Xác nhận xóa</button>
+            }
+            else
+            {
+                <a asp-action="Edit" asp-route-id="@Model.MaTheLoai" class="btn btn-warning fw-semibold">Chuyển sang Sửa trạng thái</a>
+            }
+            <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+        </form>
+    </div>
+</div>

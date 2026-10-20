@@ -1,0 +1,127 @@
+@model IEnumerable<QuanLyThuVien.Models.PhieuMuon>
+@{
+    ViewData["Title"] = "Quản lý Phiếu mượn";
+    DateTime homNay = DateTime.Today;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h3 class="fw-bold text-primary mb-0">📋 QUẢN LÝ PHIẾU MƯỢN &amp; TRẢ SÁCH</h3>
+        <small class="text-muted">Tìm kiếm theo tên độc giả, lọc theo trạng thái/ngày mượn, xác nhận cho mượn và trả sách</small>
+    </div>
+    <a asp-action="QuaHan" class="btn btn-danger fw-bold">⚠️ Xem Danh sách Quá hạn</a>
+</div>
+
+<div class="card shadow-sm border-0 mb-3">
+    <div class="card-body">
+        <form asp-action="Index" method="get" class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label small fw-semibold mb-1">🔍 Tên độc giả</label>
+                <input type="text" name="tenDocGia" value="@ViewBag.TenDocGia" class="form-control form-control-sm" placeholder="Nhập tên độc giả..." />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-semibold mb-1">📌 Trạng thái phiếu</label>
+                <select name="trangThai" class="form-select form-select-sm">
+                    <option value="">-- Tất cả trạng thái --</option>
+                    <option value="Chờ xác nhận" selected="@(ViewBag.TrangThai == "Chờ xác nhận")">Chờ xác nhận</option>
+                    <option value="Đang mượn" selected="@(ViewBag.TrangThai == "Đang mượn")">Đang mượn</option>
+                    <option value="Đã trả" selected="@(ViewBag.TrangThai == "Đã trả")">Đã trả</option>
+                    <option value="Đã hủy" selected="@(ViewBag.TrangThai == "Đã hủy")">Đã hủy</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-semibold mb-1">📅 Từ ngày mượn</label>
+                <input type="date" name="tuNgay" value="@ViewBag.TuNgay" class="form-control form-control-sm" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-semibold mb-1">📅 Đến ngày mượn</label>
+                <input type="date" name="denNgay" value="@ViewBag.DenNgay" class="form-control form-control-sm" />
+            </div>
+            <div class="col-md-2 d-flex gap-1">
+                <button type="submit" class="btn btn-sm btn-primary fw-bold">Lọc phiếu</button>
+                <a asp-action="Index" class="btn btn-sm btn-outline-secondary">Đặt lại</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered mb-0 align-middle">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Mã phiếu</th>
+                        <th>Độc giả</th>
+                        <th>Ngày mượn</th>
+                        <th>Hạn trả</th>
+                        <th>Các đầu sách mượn</th>
+                        <th class="text-center">Trạng thái</th>
+                        <th class="text-center" style="width: 240px;">Xử lý nghiệp vụ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        bool quaHan = (item.TrangThai == "Đang mượn" && item.HanTra.Date < homNay);
+                        <tr class="@(quaHan ? "table-danger" : "")">
+                            <td class="fw-bold">#@item.MaPhieuMuon</td>
+                            <td>
+                                <div class="fw-semibold text-primary">@item.DocGia?.HoTen</div>
+                                <small class="text-muted">SĐT: @item.DocGia?.SoDienThoai</small>
+                            </td>
+                            <td>@item.NgayMuon.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <span class="@(quaHan ? "text-danger fw-bold" : "")">@item.HanTra.ToString("dd/MM/yyyy")</span>
+                                @if (quaHan)
+                                {
+                                    <div class="badge bg-danger mt-1">Quá hạn @((homNay - item.HanTra.Date).Days) ngày</div>
+                                }
+                            </td>
+                            <td>
+                                @foreach (var ct in item.ChiTietPhieuMuons)
+                                {
+                                    <div>• @ct.Sach?.TenSach (SL: <strong>@ct.SoLuongMuon</strong>)</div>
+                                }
+                            </td>
+                            <td class="text-center">
+                                @if (item.TrangThai == "Chờ xác nhận")
+                                {
+                                    <span class="badge bg-warning text-dark">Chờ xác nhận</span>
+                                }
+                                else if (item.TrangThai == "Đang mượn")
+                                {
+                                    <span class="badge bg-primary">Đang mượn</span>
+                                }
+                                else if (item.TrangThai == "Đã trả")
+                                {
+                                    <span class="badge bg-success">Đã trả</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Đã hủy</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <a asp-action="Details" asp-route-id="@item.MaPhieuMuon" class="btn btn-sm btn-outline-info">Chi tiết</a>
+                                @if (item.TrangThai == "Chờ xác nhận")
+                                {
+                                    <form asp-action="XacNhanMuon" asp-route-id="@item.MaPhieuMuon" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-success fw-semibold">Duyệt mượn</button>
+                                    </form>
+                                    <form asp-action="HuyPhieu" asp-route-id="@item.MaPhieuMuon" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Hủy phiếu #@item.MaPhieuMuon?');">Hủy</button>
+                                    </form>
+                                }
+                                else if (item.TrangThai == "Đang mượn")
+                                {
+                                    <a asp-action="TraSach" asp-route-id="@item.MaPhieuMuon" class="btn btn-sm btn-primary fw-semibold">Nhận trả sách</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

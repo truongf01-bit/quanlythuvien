@@ -1,0 +1,100 @@
+@model QuanLyThuVien.Models.PhieuMuon
+@{
+    ViewData["Title"] = "Chi tiết Phiếu mượn #" + Model.MaPhieuMuon;
+}
+
+<div class="card border-0 shadow-sm mx-auto" style="max-width: 920px;">
+    <div class="card-header bg-primary-custom text-white d-flex justify-content-between align-items-center py-3">
+        <h5 class="mb-0 fw-bold">Chi Tiết Phiếu Mượn #@Model.MaPhieuMuon (Quản Trị Viên)</h5>
+        <span class="badge bg-light text-dark">@Model.TrangThai</span>
+    </div>
+    <div class="card-body p-4">
+        <div class="row g-3 mb-4 bg-light rounded-3 p-3 border">
+            <div class="col-md-6 small">
+                <p class="mb-1 text-muted">Độc giả mượn: <strong class="text-dark">@Model.DocGia?.HoTen</strong> (Mã ĐG: #@Model.MaDocGia)</p>
+                <p class="mb-1 text-muted">Số điện thoại: <strong class="text-dark">@Model.DocGia?.SoDienThoai</strong></p>
+                <p class="mb-0 text-muted">Email liên hệ: <strong class="text-dark">@Model.DocGia?.Email</strong></p>
+            </div>
+            <div class="col-md-6 small">
+                <p class="mb-1 text-muted">Ngày đăng ký: <strong class="text-dark">@Model.NgayMuon.ToString("dd/MM/yyyy")</strong></p>
+                <p class="mb-1 text-muted">Hạn trả: <strong class="text-danger">@Model.HanTra.ToString("dd/MM/yyyy")</strong></p>
+                <p class="mb-0 text-muted">Trạng thái phiếu: <span class="badge bg-secondary bg-opacity-25 text-dark">@Model.TrangThai</span></p>
+            </div>
+        </div>
+
+        <h6 class="fw-bold text-dark mb-3">Danh Sách Sách Trong Phiếu Mượn</h6>
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle">
+                <thead class="table-light small">
+                    <tr>
+                        <th style="width: 50px;">Bìa</th>
+                        <th>Tên đầu sách</th>
+                        <th>Thể loại</th>
+                        <th class="text-center">SL Mượn</th>
+                        <th class="text-center">Kho còn</th>
+                        <th class="text-center">Ngày trả</th>
+                        <th class="text-center">Tình trạng</th>
+                    </tr>
+                </thead>
+                <tbody class="small">
+                    @foreach (var ct in Model.ChiTietPhieuMuons)
+                    {
+                        var imgPath = string.IsNullOrEmpty(ct.Sach?.HinhAnh) ? "/images/books/default-book.svg" : ct.Sach?.HinhAnh;
+                        <tr>
+                            <td class="text-center p-2">
+                                <img src="@imgPath" alt="@ct.Sach?.TenSach" class="book-thumb-sm" onerror="this.src='/images/books/default-book.svg'" />
+                            </td>
+                            <td>
+                                <a asp-controller="Sach" asp-action="Details" asp-route-id="@ct.MaSach" class="fw-semibold text-dark text-decoration-none">
+                                    @ct.Sach?.TenSach
+                                </a>
+                                <div class="text-muted small">Mã: #@ct.MaSach</div>
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary bg-opacity-10 text-secondary">
+                                    @ct.Sach?.TheLoai?.TenTheLoai
+                                </span>
+                            </td>
+                            <td class="text-center fw-bold text-primary">@ct.SoLuongMuon</td>
+                            <td class="text-center">@ct.Sach?.SoLuongCon / @ct.Sach?.SoLuong</td>
+                            <td class="text-center">
+                                @(ct.NgayTra.HasValue ? ct.NgayTra.Value.ToString("dd/MM/yyyy") : "Chưa trả")
+                            </td>
+                            <td class="text-center">
+                                @if (ct.TinhTrangTra == "Đã trả đúng hạn")
+                                {
+                                    <span class="badge bg-success bg-opacity-10 text-success">Đã trả đúng hạn</span>
+                                }
+                                else if (ct.TinhTrangTra == "Trả quá hạn")
+                                {
+                                    <span class="badge bg-danger bg-opacity-10 text-danger">Trả quá hạn</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning bg-opacity-25 text-dark">Chưa trả</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 mt-4 pt-3 border-top">
+            @if (Model.TrangThai == "Chờ xác nhận")
+            {
+                <form asp-action="XacNhanMuon" asp-route-id="@Model.MaPhieuMuon" method="post">
+                    <button type="submit" class="btn btn-success fw-semibold px-4">Duyệt Cho Mượn</button>
+                </form>
+                <form asp-action="HuyPhieu" asp-route-id="@Model.MaPhieuMuon" method="post">
+                    <button type="submit" class="btn btn-outline-danger fw-semibold" onclick="return confirm('Bạn có chắc muốn hủy phiếu #@Model.MaPhieuMuon?');">Hủy Yêu Cầu</button>
+                </form>
+            }
+            else if (Model.TrangThai == "Đang mượn")
+            {
+                <a asp-action="TraSach" asp-route-id="@Model.MaPhieuMuon" class="btn btn-primary-custom px-4 fw-semibold">Xác Nhận Trả Sách</a>
+            }
+            <a asp-action="Index" class="btn btn-outline-secondary">Quay lại danh sách phiếu</a>
+        </div>
+    </div>
+</div>
